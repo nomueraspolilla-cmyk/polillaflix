@@ -11,6 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
   <style>
     /* ─── RESET & VARIABLES ──────────────────────── */
+    
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
@@ -336,6 +337,62 @@
       cursor: pointer; transition: background 0.2s;
     }
     .muzaflix-cw-item:hover { background: #333; color: #fff; }
+    
+    
+(function() {
+  'use strict';
+  document.addEventListener('DOMContentLoaded', () => {
+    // 🔍 Busca el botón ⛶ exacto (intercepta antes que el player nativo)
+    const fsBtn = [...document.querySelectorAll('button, span, a, div')].find(el => 
+      el.textContent.trim() === '⛶' || 
+      el.innerHTML.includes('⛶') || 
+      el.getAttribute('aria-label')?.includes('Pantalla completa')
+    );
+    
+    const video = document.querySelector('video');
+    const player = video?.closest('.player-container') || document.querySelector('[data-player]') || video?.parentElement;
+
+    if (!fsBtn || !player) return console.warn('⛶ Botón o reproductor no encontrado');
+
+    // ⚡ Intercepta en fase de captura para ganar antes que el player nativo
+    fsBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopImmediatePropagation(); // 🚫 Evita que el reproductor ejecute su FS vertical
+
+      const isFS = !!(document.fullscreenElement || document.webkitFullscreenElement);
+      const target = video || player;
+
+      if (!isFS) {
+        // 1️⃣ Entrar en fullscreen
+        const enterFS = target.requestFullscreen || target.webkitRequestFullscreen || target.mozRequestFullScreen;
+        if (enterFS) {
+          enterFS.call(target)
+            .then(() => {
+              // 2️⃣ Forzar horizontal inmediatamente después de concederse
+              if (screen.orientation?.lock) screen.orientation.lock('landscape-primary').catch(() => {});
+            })
+            .catch(err => console.warn('📱 Fullscreen bloqueado:', err.message));
+        }
+      } else {
+        // 📉 Salir de fullscreen
+        const exitFS = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen;
+        if (exitFS) exitFS.call(document);
+        if (screen.orientation?.unlock) screen.orientation.unlock();
+      }
+    }, true); // useCapture: true → se ejecuta ANTES que los listeners del player
+  });
+})();
+
+    <style>
+/* Elimina propiedades que Chrome Android rechaza para fullscreen */
+.player-container, video {
+  transform: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  contain: none !important;
+}
+</style>
+    
   </style>
 </head>
 <body>
@@ -1037,6 +1094,37 @@
       };
 
     })();
+    // ⛶ Fullscreen Multiplataforma (Android/iOS/Win/Mac)
+const muzaflixFullscreen = (() => {
+  return {
+    toggle(targetEl) {
+      const el = targetEl || document.querySelector('video') || document.documentElement;
+      const isFS = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+      const method = isFS ? 'exitFullscreen' : 'requestFullscreen';
+      const obj = isFS ? document : el;
+      const fn = obj[method] || 
+                 obj['webkit' + method.charAt(0).toUpperCase() + method.slice(1)] || 
+                 obj['moz' + method.charAt(0).toUpperCase() + method.slice(1)] || 
+                 obj['ms' + method.charAt(0).toUpperCase() + method.slice(1)];
+      if (fn) fn.call(obj).catch(err => console.warn('📱 Fullscreen bloqueado:', err.message));
+    }
+  };
+})();
+
+// Vinculación segura al botón ⛶
+document.addEventListener('DOMContentLoaded', () => {
+  const fsBtn = document.querySelector('[aria-label="Pantalla completa"], .fullscreen-btn, #btn-fullscreen') || 
+                [...document.querySelectorAll('button, span, div')].find(el => el.textContent.trim().includes('⛶'));
+                
+  if (fsBtn) {
+    fsBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation(); // ⚠️ Crítico en Android: evita que otros handlers interfieran
+      const video = document.querySelector('video') || document.querySelector('[data-player]');
+      muzaflixFullscreen.toggle(video);
+    });
+  }
+});
   </script>
 </body>
 </html>
