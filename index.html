@@ -65,6 +65,7 @@
       background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
       user-select: none;
+      margin-left: 45px; /* Espacio para el botón del menú */
     }
     #pwa-install-btn {
       background: rgba(0,255,102,0.1); border: 1px solid var(--accent);
@@ -285,9 +286,91 @@
       .modal-body { padding: 18px 16px; }
       #modal-title { font-size: 1.8rem; }
     }
+
+    /* ─── ESTILOS SIDEBAR & OFFCANVAS ────────────── */
+    /* Botón Header */
+    .muzaflix-menu-toggle {
+      position: fixed; top: 16px; left: 16px; z-index: 1050;
+      background: rgba(0,0,0,0.6); border: none; color: #fff; font-size: 24px;
+      padding: 6px 10px; border-radius: 6px; cursor: pointer; backdrop-filter: blur(4px);
+    }
+    .muzaflix-menu-toggle:hover { background: rgba(255,255,255,0.1); }
+
+    /* Off-Canvas */
+    .muzaflix-offcanvas {
+      position: fixed; top: 0; left: 0; width: 280px; height: 100vh;
+      background: #0f0f0f; color: #e5e5e5; z-index: 1060;
+      transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow-y: auto; padding: 20px; box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif;
+    }
+    .muzaflix-offcanvas.active { transform: translateX(0); }
+
+    .muzaflix-sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .muzaflix-close-btn { background: none; border: none; color: #fff; font-size: 22px; cursor: pointer; }
+    .muzaflix-nav ul { list-style: none; padding: 0; margin: 0; }
+    .muzaflix-nav li { margin-bottom: 8px; }
+    .muzaflix-nav a { color: #b3b3b3; text-decoration: none; display: block; padding: 10px; border-radius: 6px; transition: 0.2s; }
+    .muzaflix-nav a:hover { background: #1f1f1f; color: #fff; }
+    .muzaflix-submenu { padding-left: 14px; display: none; }
+    .muzaflix-submenu.open { display: block; }
+    hr { border: 0; border-top: 1px solid #333; margin: 18px 0; }
+    h3 { margin: 0 0 10px; font-size: 16px; color: #fff; }
+
+    /* Backdrop */
+    .muzaflix-backdrop {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7); z-index: 1055; opacity: 0; visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+    .muzaflix-backdrop.active { opacity: 1; visibility: visible; }
+
+    /* Carrusel Continuar Viendo (injected) */
+    .muzaflix-cw-carousel {
+      display: flex; gap: 12px; overflow-x: auto; padding: 16px 0; margin: 20px 0;
+      scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+    }
+    .muzaflix-cw-item {
+      min-width: 140px; height: 80px; background: #222; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      color: #888; font-size: 13px; scroll-snap-align: start; flex-shrink: 0;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .muzaflix-cw-item:hover { background: #333; color: #fff; }
   </style>
 </head>
 <body>
+
+  <button id="muzaflix-menu-toggle" class="muzaflix-menu-toggle" aria-label="Abrir menú">☰</button>
+
+  <aside id="muzaflix-sidebar" class="muzaflix-offcanvas">
+    <div class="muzaflix-sidebar-header">
+      <h2>Muzaflix</h2>
+      <button id="muzaflix-close-sidebar" class="muzaflix-close-btn" aria-label="Cerrar menú">✕</button>
+    </div>
+    <nav class="muzaflix-nav">
+      <ul>
+        <li><a href="#" id="muzaflix-nav-inicio">🏠 Inicio</a></li>
+        <li>
+          <a href="#" id="muzaflix-nav-categorias">🎬 Categorías</a>
+          <ul class="muzaflix-submenu" id="muzaflix-cat-list">
+            <li><a href="#" data-type="movie">Películas</a></li>
+            <li><a href="#" data-type="tv">Series</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="#" id="muzaflix-nav-generos">🎭 Géneros</a>
+          <ul class="muzaflix-submenu" id="muzaflix-genres-list"></ul>
+        </li>
+      </ul>
+      <hr>
+      <h3>Mi Espacio</h3>
+      <ul>
+        <li><a href="#" id="muzaflix-nav-milista">❤️ Mi Lista</a></li>
+        <li><a href="#" id="muzaflix-nav-continuar">⏯️ Continuar Viendo</a></li>
+      </ul>
+    </nav>
+  </aside>
+  <div id="muzaflix-sidebar-backdrop" class="muzaflix-backdrop"></div>
 
   <header>
     <div class="logo">Muza<span>flix</span></div>
@@ -300,45 +383,42 @@
     </div>
   </header>
 
-  <div class="hero">
-    <h1 class="hero-label">En <em>Muzaflix</em></h1>
-  </div>
-  <p class="hero-sub">Catálogo definitivo · PlayIMDb · Netflix-style · Multi-categoría</p>
+  <main id="main-content">
+    <div class="hero">
+      <h1 class="hero-label">En <em>Muzaflix</em></h1>
+    </div>
+    <p class="hero-sub">Tus películas y series favoritas, en un solo lugar.</p>
 
-  <!-- Resultados de búsqueda (oculto por defecto) -->
-  <div id="search-results" style="display:none;">
-    <div class="section-title" id="search-label">Resultados</div>
-    <div class="grid-search" id="search-grid"></div>
-  </div>
-
-  <!-- Catálogo principal -->
-  <div id="catalog">
-    <!-- Mi Lista -->
-    <div class="section" id="section-favs" style="display:none;">
-      <div class="section-title">⭐ Mi Lista</div>
-      <div class="carousel" id="carousel-favs"></div>
+    <div id="search-results" style="display:none;">
+      <div class="section-title" id="search-label">Resultados</div>
+      <div class="grid-search" id="search-grid"></div>
     </div>
 
-    <!-- Populares -->
-    <div class="section">
-      <div class="section-title">🔥 Populares Ahora</div>
-      <div class="carousel" id="carousel-popular"></div>
-    </div>
+    <div id="muzaflix-cw-container" style="padding: 0 40px;"></div>
 
-    <!-- Últimos Estrenos -->
-    <div class="section">
-      <div class="section-title">🎬 Últimos Estrenos</div>
-      <div class="carousel" id="carousel-nowplaying"></div>
-    </div>
+    <div id="catalog">
+      <div class="section" id="section-favs" style="display:none;">
+        <div class="section-title">⭐ Mi Lista</div>
+        <div class="carousel" id="carousel-favs"></div>
+      </div>
 
-    <!-- Series en Tendencia -->
-    <div class="section">
-      <div class="section-title">📺 Series en Tendencia</div>
-      <div class="carousel" id="carousel-tvtrending"></div>
-    </div>
-  </div>
+      <div class="section" id="sec-popular">
+        <div class="section-title">Populares Ahora</div>
+        <div class="carousel" id="carousel-popular"></div>
+      </div>
 
-  <!-- MODAL -->
+      <div class="section" id="sec-nowplaying">
+        <div class="section-title"> Últimos Estrenos</div>
+        <div class="carousel" id="carousel-nowplaying"></div>
+      </div>
+
+      <div class="section" id="sec-tvtrending">
+        <div class="section-title">Series en Tendencia</div>
+        <div class="carousel" id="carousel-tvtrending"></div>
+      </div>
+    </div>
+  </main>
+
   <div id="modal-backdrop" role="dialog" aria-modal="true">
     <div id="modal">
       <div class="modal-header">
@@ -354,13 +434,11 @@
       <div class="modal-body">
         <p id="modal-overview"></p>
 
-        <!-- Botón favoritos -->
         <button class="fav-btn" id="fav-btn">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           <span id="fav-btn-text">Añadir a Mi Lista</span>
         </button>
 
-        <!-- Selectores TV -->
         <div id="tv-selectors">
           <div class="tv-select-wrap">
             <label>Temporada</label>
@@ -528,6 +606,11 @@
       backdrop.classList.add("open");
       document.body.style.overflow = "hidden";
 
+      // Guardar en Continuar Viendo usando la lógica integrada
+      if (typeof window.muzaflixTrackContinueWatching === 'function') {
+        window.muzaflixTrackContinueWatching(item);
+      }
+
       // Fetch detalle para obtener imdb_id y nro temporadas
       try {
         const resDetail = await fetch(`${API_BASE}/${currentType}/${item.id}?api_key=${API_KEY}`);
@@ -690,8 +773,7 @@
       clearTimeout(searchTimeout);
       const q = e.target.value.trim();
       if (!q) {
-        document.getElementById("search-results").style.display = "none";
-        document.getElementById("catalog").style.display = "";
+        window.resetMuzaflixFilters();
         return;
       }
       searchTimeout = setTimeout(() => doSearch(q), 380);
@@ -727,8 +809,21 @@
         }
         combined.forEach((m, i) => grid.appendChild(buildCard(m, i)));
       } catch (err) {
-        grid.innerHTML = `<div style="color:var(--muted);">Error al buscar: ${err.message}</div>`;
+        grid.innerHTML = `<div style="color:var(--muted);` + `">Error al buscar: ${err.message}</div>`;
       }
+    }
+
+    /* ─── RESET FILTROS GLOBAL ───────────────────────────── */
+    window.resetMuzaflixFilters = function() {
+      document.getElementById("search-results").style.display = "none";
+      document.getElementById("catalog").style.display = "";
+      document.getElementById("sec-popular").style.display = "";
+      document.getElementById("sec-nowplaying").style.display = "";
+      document.getElementById("sec-tvtrending").style.display = "";
+      searchEl.value = "";
+      loadCarousel("carousel-popular",    "/movie/popular",        "movie");
+      loadCarousel("carousel-nowplaying", "/movie/now_playing",    "movie");
+      loadCarousel("carousel-tvtrending", "/trending/tv/week",     "tv");
     }
 
     /* ─── INICIO ─────────────────────────────────────────── */
@@ -761,6 +856,187 @@
       }
     });
     window.addEventListener("appinstalled", () => { installBtn.style.display = "none"; });
+  </script>
+
+  <script>
+    (function() {
+      'use strict';
+      
+      const sidebar = document.getElementById('muzaflix-sidebar');
+      const backdrop = document.getElementById('muzaflix-sidebar-backdrop');
+      const toggleBtn = document.getElementById('muzaflix-menu-toggle');
+      const closeBtn = document.getElementById('muzaflix-close-sidebar');
+      const catList = document.getElementById('muzaflix-cat-list');
+      const genresList = document.getElementById('muzaflix-genres-list');
+      let sidebarOpen = false;
+
+      // Géneros base TMDb
+      const tmdbGenres = [
+        { id: 28, name: 'Acción' }, { id: 12, name: 'Aventura' }, { id: 16, name: 'Animación' },
+        { id: 35, name: 'Comedia' }, { id: 80, name: 'Crimen' }, { id: 18, name: 'Drama' },
+        { id: 14, name: 'Fantasía' }, { id: 27, name: 'Terror' }, { id: 878, name: 'Ciencia Ficción' }
+      ];
+
+      // Inicializar dropdown géneros
+      tmdbGenres.forEach(g => {
+        const li = document.createElement('li');
+        li.innerHTML = `<a href="#" data-genre-id="${g.id}">${g.name}</a>`;
+        genresList.appendChild(li);
+      });
+
+      // Toggle con History API (Soporte Back Android)
+      function toggleSidebar(forceState) {
+        const newState = forceState !== undefined ? forceState : !sidebarOpen;
+        sidebarOpen = newState;
+        sidebar.classList.toggle('active', sidebarOpen);
+        backdrop.classList.toggle('active', sidebarOpen);
+        
+        if (sidebarOpen) {
+          history.pushState({ sidebarOpen: true }, '', '');
+        }
+      }
+
+      function closeSidebar() { toggleSidebar(false); }
+
+      toggleBtn.addEventListener('click', (e) => { e.preventDefault(); toggleSidebar(true); });
+      closeBtn.addEventListener('click', closeSidebar);
+      backdrop.addEventListener('click', closeSidebar);
+
+      window.addEventListener('popstate', () => {
+        if (sidebarOpen) closeSidebar();
+      });
+
+      // 🏠 Inicio: Reset filtros interactuando con tu función global nativa
+      document.getElementById('muzaflix-nav-inicio').addEventListener('click', (e) => {
+        e.preventDefault();
+        if (typeof window.resetMuzaflixFilters === 'function') window.resetMuzaflixFilters();
+        else window.location.reload();
+        closeSidebar();
+      });
+
+      // 🎬 Películas / Series: Lógica de Filtro Cruzado con el Catálogo TMDB original
+      document.getElementById('muzaflix-nav-categorias').addEventListener('click', (e) => {
+        e.preventDefault();
+        catList.classList.toggle('open');
+      });
+
+      document.querySelectorAll('#muzaflix-cat-list a').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const type = e.currentTarget.dataset.type;
+          
+          document.getElementById("search-results").style.display = "none";
+          document.getElementById("catalog").style.display = "";
+          
+          const popSec = document.getElementById('sec-popular');
+          const npSec = document.getElementById('sec-nowplaying');
+          const tvSec = document.getElementById('sec-tvtrending');
+
+          if (type === 'movie') {
+            popSec.style.display = ""; npSec.style.display = ""; tvSec.style.display = "none";
+            loadCarousel("carousel-popular", "/movie/popular", "movie");
+            loadCarousel("carousel-nowplaying", "/movie/now_playing", "movie");
+          } else {
+            popSec.style.display = "none"; npSec.style.display = "none"; tvSec.style.display = "";
+            loadCarousel("carousel-tvtrending", "/trending/tv/week", "tv");
+          }
+          closeSidebar();
+        });
+      });
+
+      // 🎭 Géneros: Fetch dinámico conectado a la UI nativa
+      document.getElementById('muzaflix-nav-generos').addEventListener('click', (e) => {
+        e.preventDefault();
+        genresList.classList.toggle('open');
+      });
+
+      genresList.addEventListener('click', async (e) => {
+        if (e.target.tagName === 'A') {
+          e.preventDefault();
+          const genreId = e.target.dataset.genreId;
+          const genreName = e.target.textContent;
+          
+          document.getElementById("catalog").style.display = "none";
+          const srEl  = document.getElementById("search-results");
+          const grid  = document.getElementById("search-grid");
+          const label = document.getElementById("search-label");
+          
+          srEl.style.display = "";
+          label.textContent  = `Género: ${genreName}`;
+          grid.innerHTML     = "";
+
+          for (let i = 0; i < 8; i++) {
+            const sk = document.createElement("div");
+            sk.className = "skeleton";
+            grid.appendChild(sk);
+          }
+
+          try {
+            const res = await fetch(`${API_BASE}/discover/movie?api_key=${API_KEY}&language=es-MX&with_genres=${genreId}`);
+            const data = await res.json();
+            const items = (data.results || []).slice(0, 20).map(m => ({ ...m, _type: "movie" }));
+            grid.innerHTML = "";
+            if(!items.length) {
+              grid.innerHTML = `<div style="color:var(--muted);padding:20px;">No se encontraron películas.</div>`;
+            } else {
+              items.forEach((m, i) => grid.appendChild(buildCard(m, i)));
+            }
+          } catch(err) {
+            grid.innerHTML = `<div style="color:var(--muted);>Error: ${err.message}</div>`;
+          }
+          closeSidebar();
+        }
+      });
+
+      // ❤️ Mi Lista: Scroll directo al carrusel nativo original de Favoritos
+      document.getElementById('muzaflix-nav-milista').addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.getElementById('section-favs');
+        if (target) {
+          target.style.display = ""; 
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        closeSidebar();
+      });
+
+      // ⏯️ Continuar Viendo: Carga y renderizado usando objetos TMDB guardados de tu reproductor nativo
+      document.getElementById('muzaflix-nav-continuar').addEventListener('click', (e) => {
+        e.preventDefault();
+        const history = JSON.parse(localStorage.getItem('muzaflix_continue_watching') || '[]');
+        
+        if (history.length === 0) {
+          alert('No has visto nada recientemente.');
+          closeSidebar();
+          return;
+        }
+
+        const cwContainer = document.getElementById('muzaflix-cw-container');
+        cwContainer.innerHTML = `
+          <div class="section-title" style="padding: 20px 0 10px 0;">⏯️ Continuar Viendo</div>
+          <div class="muzaflix-cw-carousel" id="cw-carousel-list"></div>
+        `;
+        
+        const listContainer = document.getElementById('cw-carousel-list');
+        history.slice().reverse().forEach((item, i) => {
+          const card = buildCard(item, i);
+          listContainer.appendChild(card);
+        });
+
+        cwContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        closeSidebar();
+      });
+
+      // 🌐 Exposición e inyección global para guardar el objeto multimedia completo al reproducir
+      window.muzaflixTrackContinueWatching = function(item) {
+        if (!item || !item.id) return;
+        let history = JSON.parse(localStorage.getItem('muzaflix_continue_watching') || '[]');
+        history = history.filter(h => h.id !== item.id); // Filtrar duplicados por ID tracker
+        history.push(item);
+        if (history.length > 7) history = history.slice(-7); // Aumentado a 7 items de buffer
+        localStorage.setItem('muzaflix_continue_watching', JSON.stringify(history));
+      };
+
+    })();
   </script>
 </body>
 </html>
