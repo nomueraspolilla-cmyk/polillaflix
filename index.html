@@ -765,48 +765,14 @@ border-right: 1px solid rgba(255,255,255,0.06);
     
   </style>
 </head>
-
-document.addEventListener('DOMContentLoaded', () => {
-  const btn = document.getElementById('add-profile-btn');
-  
-  if (btn) {
-    btn.addEventListener('click', () => {
-      const nombre = prompt('Nombre del nuevo perfil:');
-      if (nombre && nombre.trim() !== '') {
-        // Ejemplo simple: añadirlo visualmente a la lista
-        const perfil = document.createElement('div');
-        perfil.className = 'profile-item';
-        perfil.textContent = nombre.trim();
-        document.getElementById('profile-list').appendChild(perfil);
-        
-        console.log('Perfil creado:', nombre.trim());
-        // Aquí conectarías
-         (localStorage, API, modal, etc.)
-      }
-    });
-  }
-});
 <body>
 
 <div id="profile-screen">
   <h1 class="profile-title">¿Quién está viendo?</h1>
-  <div id="profile-list">
-    <!-- Aquí se renderizarán los perfiles existentes -->
-  </div>
-  
-  <!-- Un solo botón, con ID único -->
-  <button id="add-profile-btn" class="add-profile-btn">
-    + Agregar perfil
-  </button>
+  <div id="profile-list"></div>
+  <button id="add-profile-btn">+ Agregar perfil</button>
 </div>
 
-</div>
-
-  <button id="add-profile-btn">
-    + Agregar perfil
-  </button>
-
-</div>
   <button id="muzaflix-menu-toggle" class="muzaflix-menu-toggle" aria-label="Abrir menú">☰</button>
 
   <aside id="muzaflix-sidebar" class="muzaflix-offcanvas">
