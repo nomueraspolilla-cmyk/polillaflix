@@ -316,61 +316,299 @@ box-shadow:
     /* ─── MODAL ──────────────────────────────────── */
     #modal-backdrop {
       position: fixed; inset: 0; z-index: 200;
-      background: rgba(0,0,0,0.92); 
-      display: flex; align-items: center; justify-content: center; padding: 20px;
-      opacity: 0; pointer-events: none; transition: opacity 0.3s;
+      background: rgba(0,0,0,0.0);
+      display: flex; align-items: flex-end; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.35s, background 0.35s;
     }
-    #modal-backdrop.open { opacity: 1; pointer-events: all; }
+    #modal-backdrop.open { opacity: 1; pointer-events: all; background: rgba(0,0,0,0.75); }
 
     #modal {
-  background: rgba(10,12,12,0.52);
+      background: #0e0e0e;
+      border-radius: 22px 22px 0 0;
+      width: 100%;
+      max-width: 560px;
+      max-height: 92vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      box-shadow: 0 -8px 40px rgba(0,0,0,0.8);
+      transform: translateY(100%);
+      transition: transform 0.38s cubic-bezier(0.32, 0.72, 0, 1);
+      scrollbar-width: none;
+    }
+    #modal::-webkit-scrollbar { display: none; }
+    #modal-backdrop.open #modal { transform: translateY(0); }
 
-  backdrop-filter: blur(26px);
-  -webkit-backdrop-filter: blur(26px);
+    /* ── Hero banner ── */
+    .modal-header {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/9;
+      overflow: hidden;
+      background: #111;
+    }
+    #modal-backdrop-img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+    .modal-header-gradient {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.18) 0%,
+        rgba(0,0,0,0.65) 80%,
+        #0e0e0e 100%
+      );
+    }
 
-  border: 1px solid rgba(255,255,255,0.08);
+    /* ── Logo/imagen centrada tipo app ── */
+    #modal-studio-logo {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -55%);
+      max-width: 55%;
+      max-height: 90px;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 12px rgba(0,0,0,0.7));
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    #modal-studio-logo.visible { opacity: 1; }
 
-  border-radius: 22px;
-
-  width: 100%;
-  max-width: 960px;
-
-  max-height: 90vh;
-  overflow-y: auto;
-
-  box-shadow:
-    0 30px 80px rgba(0,0,0,0.75),
-    inset 0 1px 0 rgba(255,255,255,0.06);
-
-  transition: transform 0.3s ease;
-}
-    .modal-header { position: relative; height: 300px; overflow: hidden; }
-    #modal-backdrop-img { width:100%; height:100%; object-fit:cover; filter:brightness(0.4); }
-    .modal-header-gradient { position:absolute; bottom:0; left:0; right:0; height:60%; background:linear-gradient(to top, var(--bg), transparent); }
-    .modal-header-content { position:absolute; bottom:22px; left:28px; right:28px; }
-    #modal-title { font-family:'Bebas Neue',sans-serif; font-size:2.4rem; color:#fff; }
-
-    .modal-tags { display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; }
-    .modal-tag { padding:3px 10px; border-radius:4px; font-size:0.7rem; background:rgba(0,255,102,0.08); border:1px solid rgba(0,255,102,0.2); color:#fff; }
-    .modal-tag.year { color:var(--accent); }
-    .modal-tag.tv { color:var(--accent2); border-color:var(--accent2); background:rgba(0,179,255,0.08); }
-
+    /* ── Header controls ── */
     #close-btn {
-      position:absolute; top:16px; right:16px; width:36px; height:36px;
-      background:rgba(0,0,0,0.6); border:1px solid var(--glass-border);
-      border-radius:50%; color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; z-index:12;
+      position: absolute; top: 14px; left: 14px;
+      width: 34px; height: 34px;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(8px);
+      border: none;
+      border-radius: 50%; color: #fff; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 12; font-size: 1.1rem;
+      transition: background 0.2s;
     }
-    #close-btn:hover { background:#ff3333; }
+    #close-btn:hover { background: rgba(255,60,60,0.8); }
     #fullscreen-btn {
-      position:absolute; top:16px; right:64px; width:36px; height:36px;
-      background:rgba(0,0,0,0.6); border:1px solid var(--glass-border);
-      border-radius:50%; color:var(--accent); cursor:pointer;
-      display:flex; align-items:center; justify-content:center; z-index:12; font-size:1rem;
+      position: absolute; top: 14px; right: 14px;
+      width: 34px; height: 34px;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(8px);
+      border: none;
+      border-radius: 50%; color: #fff; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 12; font-size: 1rem;
+      transition: background 0.2s;
     }
-    #fullscreen-btn:hover { background:var(--accent); color:#000; }
+    #fullscreen-btn:hover { background: rgba(0,255,102,0.55); }
 
-    .modal-body { padding: 22px 28px; }
-    #modal-overview { font-size:0.9rem; line-height:1.7; color:#ccc; margin-bottom:20px; }
+    /* ── Info section ── */
+    .modal-info {
+      padding: 0 18px 6px;
+    }
+    #modal-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      color: #fff;
+      letter-spacing: 1px;
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+    .modal-meta-row {
+      display: flex; align-items: center;
+      gap: 10px; flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .modal-meta-pill {
+      font-size: 0.75rem;
+      color: #bbb;
+      font-weight: 400;
+    }
+    .modal-meta-pill.sep { color: #555; }
+    .modal-meta-pill.rating-badge {
+      display: flex; align-items: center; gap: 5px;
+      background: rgba(255,255,255,0.07);
+      border-radius: 5px;
+      padding: 3px 8px;
+      font-size: 0.72rem;
+    }
+    .tmdb-logo-sm {
+      height: 12px; width: auto;
+      vertical-align: middle;
+    }
+    .modal-tags { display: none; } /* Replaced by new meta row */
+
+    #modal-overview {
+      font-size: 0.88rem;
+      line-height: 1.65;
+      color: #ccc;
+      margin-bottom: 20px;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    #modal-overview.expanded {
+      -webkit-line-clamp: unset;
+      overflow: visible;
+    }
+
+    /* ── Action buttons row ── */
+    .modal-actions {
+      display: flex; align-items: center;
+      justify-content: space-around;
+      padding: 6px 10px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      margin-bottom: 4px;
+    }
+    .action-btn {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 6px;
+      background: none; border: none; cursor: pointer;
+      color: #ccc;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.72rem;
+      transition: color 0.2s;
+      padding: 6px 10px;
+      min-width: 60px;
+    }
+    .action-btn:hover { color: #fff; }
+    .action-btn.active { color: var(--accent); }
+    .action-btn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+    .action-btn.active svg { fill: var(--accent); stroke: var(--accent); }
+
+    /* ── Player inside modal ── */
+    .modal-body { padding: 0; }
+    .player-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #000;
+      overflow: visible;
+    }
+    #movie-frame { width:100%; height:100%; border:none; display:block; }
+    .player-note {
+      margin: 8px 18px 16px;
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    /* ── TV Selectors ── */
+    #tv-selectors {
+      display: none; gap: 12px; margin: 0 18px 14px; align-items: center; flex-wrap: wrap;
+    }
+    #tv-selectors.visible { display: flex; }
+    .tv-select-wrap { display:flex; flex-direction:column; gap:4px; }
+    .tv-select-wrap label { font-size:0.7rem; color:var(--muted); letter-spacing:1px; text-transform:uppercase; }
+    .tv-select {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text); border-radius:7px; padding: 7px 12px;
+      font-family: 'DM Sans', sans-serif; font-size:0.82rem; outline:none; cursor:pointer;
+      appearance: none; min-width: 110px;
+    }
+    .tv-select:focus { border-color: var(--accent); }
+    .tv-load-btn {
+      background: var(--accent); color:#000; border:none; border-radius:7px;
+      padding: 8px 18px; font-family:'DM Sans',sans-serif; font-weight:600;
+      font-size:0.82rem; cursor:pointer; margin-top:18px; transition:opacity 0.2s;
+    }
+    .tv-load-btn:hover { opacity:0.85; }
+
+    /* ── Cast section ── */
+    .modal-section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: 1.5px;
+      color: #fff;
+      padding: 14px 18px 12px;
+    }
+    .cast-scroll {
+      display: flex; gap: 16px;
+      overflow-x: auto; padding: 0 18px 18px;
+      scrollbar-width: none;
+    }
+    .cast-scroll::-webkit-scrollbar { display: none; }
+    .cast-person {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 8px;
+      flex: 0 0 72px;
+      cursor: default;
+    }
+    .cast-avatar {
+      width: 68px; height: 68px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #222;
+      border: 2px solid rgba(255,255,255,0.08);
+      transition: border-color 0.2s;
+    }
+    .cast-avatar-placeholder {
+      width: 68px; height: 68px;
+      border-radius: 50%;
+      background: #2a2a2a;
+      border: 2px solid rgba(255,255,255,0.08);
+      display: flex; align-items: center; justify-content: center;
+      color: #666; font-size: 1.5rem;
+    }
+    .cast-name {
+      font-size: 0.68rem; color: #ddd;
+      text-align: center; line-height: 1.3;
+      max-width: 72px;
+      word-break: break-word;
+    }
+    .cast-role {
+      font-size: 0.6rem; color: #888;
+      text-align: center;
+      margin-top: -5px;
+      max-width: 72px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      width: 72px;
+    }
+
+    /* ── Similar section ── */
+    .similar-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 0 18px 32px;
+    }
+    .similar-card {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #1a1a1a;
+      aspect-ratio: 2/3;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .similar-card:hover { transform: scale(1.04); }
+    .similar-card img { width:100%; height:100%; object-fit:cover; display:block; }
+    .similar-card-rating {
+      position: absolute; top: 6px; right: 6px;
+      background: rgba(0,0,0,0.7);
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 0.65rem;
+      color: var(--gold);
+      font-weight: 600;
+      display: flex; align-items: center; gap: 3px;
+    }
+    .similar-card-title {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,0.9));
+      padding: 20px 6px 6px;
+      font-size: 0.65rem;
+      color: #eee;
+      line-height: 1.2;
+    }
+
+    /* ── Fav button (hidden, replaced by action btns) ── */
+    .fav-btn { display: none !important; }
+
+    #modal-overview { font-size:0.88rem; line-height:1.65; color:#ccc; margin-bottom:16px; }
 
     /* ─── SELECTORES TV ──────────────────────────── */
     
@@ -886,70 +1124,103 @@ border-right: 1px solid rgba(255,255,255,0.06);
 
   <div id="modal-backdrop" role="dialog" aria-modal="true">
     <div id="modal">
+
+      <!-- ── Hero banner ── -->
       <div class="modal-header">
         <img id="modal-backdrop-img" src="" alt="" />
         <div class="modal-header-gradient"></div>
         <button id="close-btn" aria-label="Cerrar">✕</button>
         <button id="fullscreen-btn" title="Pantalla Completa">⛶</button>
-        <div class="modal-header-content">
-          <h2 id="modal-title"></h2>
-          <div class="modal-tags" id="modal-tags"></div>
-        </div>
       </div>
-      <div class="modal-body">
-        <p id="modal-overview"></p>
 
-        <button class="fav-btn" id="fav-btn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-          <span id="fav-btn-text">Añadir a Mi Lista</span>
-        </button>
-
-        <div id="tv-selectors">
-          <div class="tv-select-wrap">
-            <label>Temporada</label>
-            <select id="sel-season" class="tv-select"></select>
-          </div>
-          <div class="tv-select-wrap">
-            <label>Episodio</label>
-            <select id="sel-episode" class="tv-select"></select>
-          </div>
-          <button class="tv-load-btn" id="tv-load-btn">▶ Cargar Episodio</button>
+      <!-- ── Title + Meta ── -->
+      <div class="modal-info">
+        <h2 id="modal-title"></h2>
+        <div class="modal-meta-row" id="modal-meta-row">
+          <!-- filled by JS: year · rating · runtime · tmdb badge -->
         </div>
+        <!-- hidden legacy tags -->
+        <div class="modal-tags" id="modal-tags" style="display:none;"></div>
+        <p id="modal-overview"></p>
+      </div>
 
+      <!-- ── Action buttons (Mi lista / Compartir / Descargar / Comentarios) ── -->
+      <div class="modal-actions">
+        <button class="action-btn" id="fav-btn" aria-label="Mi lista">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span id="fav-btn-text">Mi lista</span>
+        </button>
+        <button class="action-btn" id="share-btn" aria-label="Compartir">
+          <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          <span>Compartir</span>
+        </button>
+        <button class="action-btn" id="download-btn" aria-label="Descargar">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span>Descargar</span>
+        </button>
+        <button class="action-btn" id="comments-btn" aria-label="Comentarios">
+          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span>Comentarios</span>
+        </button>
+      </div>
+
+      <!-- ── TV Selectors ── -->
+      <div id="tv-selectors">
+        <div class="tv-select-wrap">
+          <label>Temporada</label>
+          <select id="sel-season" class="tv-select"></select>
+        </div>
+        <div class="tv-select-wrap">
+          <label>Episodio</label>
+          <select id="sel-episode" class="tv-select"></select>
+        </div>
+        <button class="tv-load-btn" id="tv-load-btn">▶ Cargar Episodio</button>
+      </div>
+
+      <!-- ── Player ── -->
+      <div class="modal-body">
         <div class="player-wrap">
           <iframe
-          id="movie-frame"
+            id="movie-frame"
+            src=""
+            loading="lazy"
+            frameborder="0"
+            allowfullscreen
+            webkitallowfullscreen
+            mozallowfullscreen
+            allow="autoplay; fullscreen *; encrypted-media; picture-in-picture"
+            sandbox="allow-scripts allow-same-origin allow-presentation allow-forms allow-top-navigation-by-user-activation"
+            referrerpolicy="origin"
+          ></iframe>
           <div id="next-episode-overlay">
-
-  <div class="next-box">
-
-    <h3>Siguiente episodio</h3>
-
-    <p id="next-episode-text">
-      Reproduciendo automáticamente...
-    </p>
-
-    <button id="play-next-btn">
-      ▶ Ver ahora
-    </button>
-
-  </div>
-
-</div>
-  src=""
-  loading="lazy"
-  frameborder="0"
-  allowfullscreen
-  webkitallowfullscreen
-  mozallowfullscreen
-  allow="autoplay; fullscreen *; encrypted-media; picture-in-picture"
-  sandbox="allow-scripts allow-same-origin allow-presentation allow-forms allow-top-navigation-by-user-activation"
-
-  referrerpolicy="origin"
-></iframe>
+            <div class="next-box">
+              <h3>Siguiente episodio</h3>
+              <p id="next-episode-text">Reproduciendo automáticamente...</p>
+              <button id="play-next-btn">▶ Ver ahora</button>
+            </div>
+          </div>
         </div>
-        <p class="player-note">Servidor PlayIMDb Activo · Si hay problemas, usa el botón ⛶ para pantalla completa.</p>
+        <p class="player-note">Servidor PlayIMDb Activo · Si hay problemas, usa ⛶ pantalla completa.</p>
       </div>
+
+      <!-- ── Cast ── -->
+      <div id="modal-cast-section" style="display:none;">
+        <div class="modal-section-title">Reparto y equipo</div>
+        <div class="cast-scroll" id="cast-scroll"></div>
+      </div>
+
+      <!-- ── Similar / Related ── -->
+      <div id="modal-similar-section" style="display:none;">
+        <div class="modal-section-title">Similar</div>
+        <div class="similar-grid" id="similar-grid"></div>
+      </div>
+
+      <!-- Legacy hidden fav button (kept for JS compatibility) -->
+      <button class="fav-btn" id="fav-btn-legacy" style="display:none!important;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <span id="fav-btn-text-legacy">Añadir a Mi Lista</span>
+      </button>
+
     </div>
   </div>
 
@@ -982,16 +1253,10 @@ border-right: 1px solid rgba(255,255,255,0.06);
     const selSeason     = document.getElementById("sel-season");
     const selEpisode    = document.getElementById("sel-episode");
     const tvLoadBtn     = document.getElementById("tv-load-btn");
-    const nextOverlay =
-  document.getElementById("next-episode-overlay");
-
-const nextBtn =
-  document.getElementById("play-next-btn");
-const heroPlayBtn =
-  document.getElementById("hero-play-btn");
-
-const heroInfoBtn =
-  document.getElementById("hero-info-btn");
+    const nextOverlay   = document.getElementById("next-episode-overlay");
+    const nextBtn       = document.getElementById("play-next-btn");
+    const heroPlayBtn   = document.getElementById("hero-play-btn");
+    const heroInfoBtn   = document.getElementById("hero-info-btn");
     /* ─── FAVORITOS (localStorage) ──────────────────────── */
     function getFavs() {
       try { return JSON.parse(localStorage.getItem(FAV_KEY)) || []; }
@@ -1017,7 +1282,14 @@ const heroInfoBtn =
     function updateFavBtn(item) {
       const active = isFav(item.id);
       favBtn.classList.toggle("active", active);
-      favBtnText.textContent = active ? "Quitar de Mi Lista" : "Añadir a Mi Lista";
+      favBtnText.textContent = active ? "En mi lista" : "Mi lista";
+      // Update icon: filled plus when active (checkmark), outline plus when not
+      const iconSvg = favBtn.querySelector("svg");
+      if (active) {
+        iconSvg.innerHTML = '<polyline points="20 6 9 17 4 12"/>';
+      } else {
+        iconSvg.innerHTML = '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>';
+      }
     }
 
     /* ─── RENDER DE FAVORITOS ────────────────────────────── */
@@ -1129,14 +1401,31 @@ function renderContinueWatching() {
       document.getElementById("modal-overview").textContent  = item.overview || "Sin sinopsis disponible.";
       document.getElementById("modal-backdrop-img").src      = item.backdrop_path ? `${IMG_LG}${item.backdrop_path}` : "";
 
-      const tagsEl = document.getElementById("modal-tags");
-      tagsEl.innerHTML = `
-        <span class="modal-tag year">${year}</span>
-        <span class="modal-tag">★ ${rating}</span>
-        ${currentType === "tv" ? `<span class="modal-tag tv">SERIE</span>` : ""}
+      // New meta row
+      const metaRow = document.getElementById("modal-meta-row");
+      metaRow.innerHTML = `
+        <span class="modal-meta-pill">${year}</span>
+        <span class="modal-meta-pill sep">|</span>
+        <span class="modal-meta-pill">${currentType === "tv" ? "SERIE" : "PG"}</span>
+        <span class="modal-meta-pill sep">|</span>
+        <span class="modal-meta-pill" id="modal-runtime">…</span>
+        <span class="modal-meta-pill sep">|</span>
+        <span class="modal-meta-pill rating-badge">
+          <svg viewBox="0 0 24 24" width="11" height="11" fill="#01b4e4" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="3"/><text x="12" y="17" text-anchor="middle" font-size="14" font-weight="bold" fill="white" font-family="Arial">M</text></svg>
+          ${rating}
+        </span>
       `;
 
-      // Reset
+      // Reset overview expanded state
+      document.getElementById("modal-overview").classList.remove("expanded");
+
+      // Reset sections
+      document.getElementById("modal-cast-section").style.display = "none";
+      document.getElementById("modal-similar-section").style.display = "none";
+      document.getElementById("cast-scroll").innerHTML = "";
+      document.getElementById("similar-grid").innerHTML = "";
+
+      // Reset player
       movieFrame.src = "";
       tvSelectors.classList.remove("visible");
       currentImdbId  = null;
@@ -1146,52 +1435,97 @@ function renderContinueWatching() {
       backdrop.classList.add("open");
       document.body.style.overflow = "hidden";
 
-      // Guardar en Continuar Viendo usando la lógica integrada
+      // Guardar en Continuar Viendo
       if (typeof window.muzaflixTrackContinueWatching === 'function') {
         window.muzaflixTrackContinueWatching(item);
         renderContinueWatching();
       }
 
-      // Fetch detalle para obtener imdb_id y nro temporadas
+      // Fetch detalle para obtener imdb_id, runtime, cast, similar
       try {
-     const resDetail = await fetch(
-  `${API_BASE}/${currentType}/${item.id}?api_key=${API_KEY}&language=es-MX`
-);
+        const resDetail = await fetch(
+          `${API_BASE}/${currentType}/${item.id}?api_key=${API_KEY}&language=es-MX&append_to_response=credits,similar`
+        );
+        const detail = await resDetail.json();
 
-const detail = await resDetail.json();
+        // Runtime
+        const rtEl = document.getElementById("modal-runtime");
+        if (currentType === "movie" && detail.runtime) {
+          const h = Math.floor(detail.runtime / 60);
+          const m = detail.runtime % 60;
+          rtEl.textContent = h > 0 ? `${h}h ${m}m` : `${m}m`;
+        } else if (currentType === "tv" && detail.episode_run_time?.[0]) {
+          rtEl.textContent = `~${detail.episode_run_time[0]}m/ep`;
+        } else {
+          rtEl.textContent = "";
+          rtEl.previousElementSibling?.remove();
+        }
 
-if (currentType === "movie") {
+        // Cast
+        const cast = detail.credits?.cast?.slice(0, 12) || [];
+        const crew = detail.credits?.crew?.filter(c => ["Director","Producer","Executive Producer"].includes(c.job)).slice(0,3) || [];
+        const allPeople = [...crew, ...cast];
+        if (allPeople.length) {
+          const castSection = document.getElementById("modal-cast-section");
+          castSection.style.display = "";
+          const castScroll = document.getElementById("cast-scroll");
+          allPeople.forEach(p => {
+            const div = document.createElement("div");
+            div.className = "cast-person";
+            const imgSrc = p.profile_path ? `https://image.tmdb.org/t/p/w185${p.profile_path}` : null;
+            div.innerHTML = `
+              ${imgSrc
+                ? `<img class="cast-avatar" src="${imgSrc}" alt="${p.name}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+                : ""}
+              <div class="cast-avatar-placeholder" ${imgSrc ? 'style="display:none"' : ""}>👤</div>
+              <div class="cast-name">${p.name}</div>
+              <div class="cast-role">${p.character || p.job || ""}</div>
+            `;
+            castScroll.appendChild(div);
+          });
+        }
 
-  currentImdbId = detail.imdb_id || null;
+        // Similar
+        const similar = detail.similar?.results?.slice(0, 9) || [];
+        if (similar.length) {
+          const simSection = document.getElementById("modal-similar-section");
+          simSection.style.display = "";
+          const simGrid = document.getElementById("similar-grid");
+          similar.forEach(s => {
+            const sType = currentType;
+            const sTitle = s.title || s.name || "";
+            const sPoster = s.poster_path ? `${IMG_BASE}${s.poster_path}` : null;
+            const sRating = s.vote_average ? s.vote_average.toFixed(1) : "?";
+            const card = document.createElement("div");
+            card.className = "similar-card";
+            card.innerHTML = `
+              ${sPoster ? `<img src="${sPoster}" alt="${sTitle}" loading="lazy">` : `<div style="background:#222;width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#555;font-size:0.7rem;">Sin imagen</div>`}
+              <div class="similar-card-rating">★ ${sRating}</div>
+              <div class="similar-card-title">${sTitle}</div>
+            `;
+            card.addEventListener("click", () => openModal({ ...s, _type: sType }));
+            simGrid.appendChild(card);
+          });
+        }
 
-  if (currentImdbId) {
-    movieFrame.src = `${STREAM_MOVIE}${currentImdbId}/`;
-  }
-
-} else {
-
-  currentSeasons = detail.number_of_seasons || 1;
-
-  // 🔥 Obtener imdb_id REAL para series
-  const extRes = await fetch(
-    `${API_BASE}/tv/${item.id}/external_ids?api_key=${API_KEY}`
-  );
-
-  const extData = await extRes.json();
-
-  currentImdbId = extData.imdb_id || null;
-
-  buildTVSelectors(currentSeasons);
-
-  tvSelectors.classList.add("visible");
-
-  // Cargar automáticamente T1E1
-  if (currentImdbId) {
-    loadTVEpisode();
-  } else {
-    console.warn("Serie sin imdb_id");
-  }
-}
+        if (currentType === "movie") {
+          currentImdbId = detail.imdb_id || null;
+          if (currentImdbId) {
+            movieFrame.src = `${STREAM_MOVIE}${currentImdbId}/`;
+          }
+        } else {
+          currentSeasons = detail.number_of_seasons || 1;
+          const extRes = await fetch(`${API_BASE}/tv/${item.id}/external_ids?api_key=${API_KEY}`);
+          const extData = await extRes.json();
+          currentImdbId = extData.imdb_id || null;
+          buildTVSelectors(currentSeasons);
+          tvSelectors.classList.add("visible");
+          if (currentImdbId) {
+            loadTVEpisode();
+          } else {
+            console.warn("Serie sin imdb_id");
+          }
+        }
       } catch (err) {
         console.error("Error obteniendo detalles:", err);
       }
@@ -1335,23 +1669,38 @@ nextBtn?.addEventListener("click", () => {
       toggleFav(currentItem);
     });
 
-    /* ─── FULLSCREEN ────────────────────────────────
-    
+    /* ─── SHARE / DOWNLOAD / COMMENTS ───────────────────── */
+    document.getElementById("share-btn")?.addEventListener("click", () => {
+      if (!currentItem) return;
+      const title = currentItem.title || currentItem.name || "";
+      if (navigator.share) {
+        navigator.share({ title: title, text: `Mirá "${title}" en Muzaflix!`, url: window.location.href }).catch(() => {});
+      } else {
+        navigator.clipboard?.writeText(window.location.href).then(() => alert("Link copiado!")).catch(() => {});
+      }
+    });
+    document.getElementById("download-btn")?.addEventListener("click", () => {
+      alert("Descarga no disponible en esta versión.");
+    });
+    document.getElementById("comments-btn")?.addEventListener("click", () => {
+      if (!currentItem) return;
+      const tmdbUrl = `https://www.themoviedb.org/${currentType}/${currentItem.id}`;
+      window.open(tmdbUrl, "_blank", "noopener");
+    });
+
+    /* ─── OVERVIEW EXPAND ────────────────────────────────── */
+    document.getElementById("modal-overview")?.addEventListener("click", function() {
+      this.classList.toggle("expanded");
+    });
+
+    /* ─── HERO BUTTONS ──────────────────────────────── */
     heroPlayBtn?.addEventListener("click", () => {
+      if (heroItem) openModal(heroItem);
+    });
+    heroInfoBtn?.addEventListener("click", () => {
+      if (heroItem) openModal(heroItem);
+    });
 
-  if (heroItem)
-    openModal(heroItem);
-
-});
-
-heroInfoBtn?.addEventListener("click", () => {
-
-  if (heroItem)
-    openModal(heroItem);
-
-});tem);
-
-});
     /* ─── FULLSCREEN ───────────────────────────── */
 
 fsBtn.addEventListener("click", toggleCustomFullscreen);
