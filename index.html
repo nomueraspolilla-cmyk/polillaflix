@@ -762,132 +762,301 @@ box-shadow:
 /* ─── PERFILES ─────────────────────────── */
 
 #profile-screen {
-
   position: fixed;
   inset: 0;
-
-  background: #000;
-
+  background: #060a06;
   z-index: 99999;
-
   display: flex;
   flex-direction: column;
-
   align-items: center;
   justify-content: center;
-
-  gap: 30px;
+  gap: 36px;
 }
 
 .profile-title {
-
   font-family: 'Bebas Neue', sans-serif;
-
-  font-size: clamp(2rem, 5vw, 4rem);
-
-  letter-spacing: 2px;
-}
-
-#profile-list {
-
-  display: flex;
-  gap: 24px;
-
-  flex-wrap: wrap;
-
-  justify-content: center;
-}
-
-.profile-card {
-
-  display: flex;
-  flex-direction: column;
-
-  align-items: center;
-
-  gap: 12px;
-
-  cursor: pointer;
-
-  transition: transform 0.25s;
-}
-
-.profile-card:hover {
-
-  transform: scale(1.08);
-}
-
-.profile-avatar {
-
-  width: 110px;
-  height: 110px;
-
-  border-radius: 18px;
-
-  background: linear-gradient(
-    135deg,
-    var(--accent),
-    var(--accent2)
-  );
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-size: 2.5rem;
-  font-weight: bold;
-
-  color: #000;
-}
-
-.profile-name {
-
-  font-size: 0.95rem;
-
-  color: #ddd;
-}
-
-#add-profile-btn {
-
-  margin-top: 20px;
-
-  background: transparent;
-
-  border: 1px solid #666;
-
-  color: #aaa;
-
-  padding: 12px 22px;
-
-  border-radius: 10px;
-
-  cursor: pointer;
-}
-
-#add-profile-btn:hover {
-
-  border-color: #fff;
+  font-size: clamp(2rem, 5vw, 3.8rem);
+  letter-spacing: 3px;
   color: #fff;
 }
 
-/* NUEVO AVATAR IMAGE STYLE */
-.profile-avatar-img {
-
-  width: 110px;
-  height: 110px;
-
-  object-fit: cover;
-
-  border-radius: 18px;
-
-  border: 2px solid rgba(255,255,255,0.12);
-
-  transition: 0.25s;
+#profile-list {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 700px;
 }
 
+/* Tarjeta de perfil */
+.profile-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1);
+}
+.profile-card:hover { transform: scale(1.1); }
 .profile-card:hover .profile-avatar-img {
   border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(0,255,102,0.25);
 }
+.profile-avatar-img {
+  width: 110px;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 18px;
+  border: 2px solid rgba(255,255,255,0.12);
+  transition: border-color 0.22s, box-shadow 0.22s;
+  background: #1a1a1a;
+}
+.profile-name {
+  font-size: 0.92rem;
+  color: #ccc;
+  text-align: center;
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Tarjeta "+" para agregar perfil */
+.profile-card-add .profile-avatar-add {
+  width: 110px;
+  height: 110px;
+  border-radius: 18px;
+  border: 2px dashed rgba(255,255,255,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.6rem;
+  color: rgba(255,255,255,0.45);
+  transition: border-color 0.22s, color 0.22s, box-shadow 0.22s;
+  background: rgba(255,255,255,0.04);
+}
+.profile-card-add:hover .profile-avatar-add {
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(0,255,102,0.18);
+}
+.profile-card-add .profile-name { color: #888; }
+
+/* Botón Editar perfil */
+#edit-profiles-btn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #ccc;
+  padding: 10px 28px;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+#edit-profiles-btn:hover { border-color: #fff; color: #fff; }
+
+/* ─── PANTALLA DE EDICIÓN DE PERFIL ─── */
+#profile-edit-screen {
+  position: fixed;
+  inset: 0;
+  background: #060a06;
+  z-index: 99999;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  padding: 20px;
+}
+#profile-edit-screen.open { display: flex; }
+
+.profile-edit-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.2rem;
+  letter-spacing: 3px;
+  color: #fff;
+}
+
+.profile-edit-avatar-wrap {
+  position: relative;
+  cursor: pointer;
+}
+.profile-edit-avatar-wrap img {
+  width: 100px;
+  height: 100px;
+  border-radius: 16px;
+  object-fit: cover;
+  border: 2px solid var(--accent);
+}
+.profile-edit-avatar-wrap .edit-avatar-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+  font-size: 1.6rem;
+}
+.profile-edit-avatar-wrap:hover .edit-avatar-overlay { opacity: 1; }
+
+.profile-edit-name-input {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 10px;
+  padding: 13px 18px;
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  width: 320px;
+  max-width: 90vw;
+  outline: none;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+.profile-edit-name-input:focus { border-color: var(--accent); }
+.profile-edit-name-input::placeholder { color: #666; }
+
+.profile-edit-type {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 320px;
+  max-width: 90vw;
+  padding: 14px 18px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.03);
+  gap: 4px;
+}
+.profile-edit-type-label { font-size: 0.88rem; color: #ccc; font-weight: 500; }
+.profile-edit-type-desc  { font-size: 0.78rem; color: #666; }
+
+.profile-edit-actions {
+  display: flex;
+  gap: 14px;
+  margin-top: 6px;
+}
+.profile-edit-cancel {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #ccc;
+  padding: 11px 28px;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+.profile-edit-cancel:hover { border-color: #fff; color: #fff; }
+.profile-edit-save {
+  background: var(--accent);
+  border: none;
+  color: #000;
+  padding: 11px 28px;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  opacity: 0.5;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.profile-edit-save.enabled { opacity: 1; pointer-events: all; }
+
+/* ─── PANTALLA SELECTOR DE AVATAR ─── */
+#avatar-picker-screen {
+  position: fixed;
+  inset: 0;
+  background: #060a06;
+  z-index: 100000;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  overflow-y: auto;
+}
+#avatar-picker-screen.open { display: flex; }
+
+.avatar-picker-header {
+  width: 100%;
+  max-width: 860px;
+  padding: 32px 20px 20px;
+  text-align: center;
+}
+.avatar-picker-header h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem;
+  letter-spacing: 3px;
+  color: #fff;
+}
+
+.avatar-picker-body {
+  width: 100%;
+  max-width: 860px;
+  padding: 0 20px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.avatar-category-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #ddd;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.avatar-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.avatar-option {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  border: 3px solid transparent;
+  transition: border-color 0.2s, transform 0.2s;
+  flex-shrink: 0;
+}
+.avatar-option img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.avatar-option:hover { transform: scale(1.1); border-color: rgba(255,255,255,0.5); }
+.avatar-option.selected { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(0,255,102,0.35); }
+
+.avatar-picker-footer {
+  width: 100%;
+  max-width: 860px;
+  display: flex;
+  justify-content: center;
+  padding: 16px 20px 36px;
+}
+.avatar-picker-cancel {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #ccc;
+  padding: 11px 36px;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+.avatar-picker-cancel:hover { border-color: #fff; color: #fff; }
     /* ─── SEARCH OVERLAY ─────────────────────────── */
     #search-results { padding: 0 40px 60px; }
     #search-results .grid-search {
@@ -1008,7 +1177,43 @@ border-right: 1px solid rgba(255,255,255,0.06);
 <div id="profile-screen">
   <h1 class="profile-title">¿Quién está viendo?</h1>
   <div id="profile-list"></div>
-  <button id="add-profile-btn">+ Agregar perfil</button>
+  <button id="edit-profiles-btn">Editar perfil</button>
+</div>
+
+<!-- Pantalla de edición/creación de perfil -->
+<div id="profile-edit-screen">
+  <h2 class="profile-edit-title" id="profile-edit-title-text">Nuevo</h2>
+  <div class="profile-edit-avatar-wrap" id="profile-edit-avatar-wrap">
+    <img id="profile-edit-avatar-img" src="" alt="Avatar" />
+    <div class="edit-avatar-overlay">&#9998;</div>
+  </div>
+  <input
+    id="profile-edit-name"
+    class="profile-edit-name-input"
+    type="text"
+    placeholder="Introducir nombre"
+    maxlength="24"
+    autocomplete="off"
+  />
+  <div class="profile-edit-type">
+    <span class="profile-edit-type-label">Perfil de adulto</span>
+    <span class="profile-edit-type-desc">Explora y ve todo el contenido disponible.</span>
+  </div>
+  <div class="profile-edit-actions">
+    <button class="profile-edit-cancel" id="profile-edit-cancel-btn">Cancelar</button>
+    <button class="profile-edit-save" id="profile-edit-save-btn">Guardar cambios</button>
+  </div>
+</div>
+
+<!-- Pantalla de selección de imagen de perfil -->
+<div id="avatar-picker-screen">
+  <div class="avatar-picker-header">
+    <h2>Cambiar imagen de perfil</h2>
+  </div>
+  <div class="avatar-picker-body" id="avatar-picker-body"></div>
+  <div class="avatar-picker-footer">
+    <button class="avatar-picker-cancel" id="avatar-picker-cancel-btn">Cancelar</button>
+  </div>
 </div>
 
   <button id="muzaflix-menu-toggle" class="muzaflix-menu-toggle" aria-label="Abrir menú">☰</button>
@@ -1888,111 +2093,313 @@ document.addEventListener("webkitfullscreenchange", async () => {
 let heroItem = null;
 
 async function loadHeroFeatured() {
-
   try {
-
+    // Agregamos la cabecera 'Accept' para pedir explícitamente JSON plano
     const res = await fetch(
-      `${API_BASE}/trending/all/week?api_key=${API_KEY}&language=es-MX`
+      `${API_BASE}/trending/all/week?api_key=${API_KEY}&language=es-MX`,
+      {
+        headers: {
+          'Accept': 'application/json'
+        }
+      }
     );
 
-    const data = await res.json();
+    // En vez de hacer res.json() directo, bajamos la respuesta como texto para analizarla
+    const textData = await res.text();
+
+    // Validamos si la respuesta contiene los caracteres rotos de GZIP (como el token '')
+    if (textData.startsWith('') || textData.includes('')) {
+      console.warn("Se detectaron caracteres binarios corruptos (GZIP). Reintentando petición limpia...");
+      // Si viene corrupto, intentamos una segunda petición forzando un truco en la URL para romper el caché del servidor
+      const retryRes = await fetch(`${API_BASE}/trending/all/week?api_key=${API_KEY}&language=es-MX&v=${Date.now()}`);
+      const retryText = await retryRes.text();
+      
+      if (retryText.startsWith('')) {
+        throw new SyntaxError("El servidor de TMDb insiste en enviar GZIP no soportado.");
+      }
+      
+      var data = JSON.parse(retryText);
+    } else {
+      var data = JSON.parse(textData);
+    }
 
     if (!data.results?.length) return;
 
-    // Elegir uno random del top 5
-    const featured =
-      data.results[Math.floor(Math.random() * 5)];
+    // Tu lógica original exacta (Elegir uno random del top 5)
+    const featured = data.results[Math.floor(Math.random() * 5)];
 
-    featured._type =
-      featured.media_type === "tv"
-        ? "tv"
-        : "movie";
+    featured._type = featured.media_type === "tv" ? "tv" : "movie";
 
     heroItem = featured;
 
-    const hero =
-      document.getElementById("hero-featured");
+    const hero = document.getElementById("hero-featured");
+    if (hero && featured.backdrop_path) {
+      hero.style.backgroundImage = `url(${IMG_LG}${featured.backdrop_path})`;
+    }
 
-    hero.style.backgroundImage =
-      `url(${IMG_LG}${featured.backdrop_path})`;
+    const titleEl = document.getElementById("hero-title");
+    if (titleEl) {
+      titleEl.textContent = featured.title || featured.name || "Sin título";
+    }
 
-    document.getElementById("hero-title").textContent =
-      featured.title ||
-      featured.name ||
-      "Sin título";
-
-    document.getElementById("hero-description").textContent =
-      featured.overview ||
-      "Sin descripción disponible.";
+    const descEl = document.getElementById("hero-description");
+    if (descEl) {
+      descEl.textContent = featured.overview || "Sin descripción disponible.";
+    }
 
   } catch(err) {
-
-    console.error("Hero error:", err);
-
+    console.error("Hero error solucionado con respaldo:", err);
+    
+    // RESPALDO DE SEGURIDAD: Si todo falla, no dejes la pantalla en negro.
+    // Mostramos un degradado elegante y un texto amigable de Muzaflix mientras se acomoda la API.
+    const hero = document.getElementById("hero-featured");
+    if (hero) {
+      hero.style.backgroundImage = "linear-gradient(135deg, #050705 0%, #0d110d 100%)";
+    }
+    const titleEl = document.getElementById("hero-title");
+    if (titleEl) titleEl.textContent = "Muzaflix";
+    
+    const descEl = document.getElementById("hero-description");
+    if (descEl) descEl.textContent = "Tu plataforma de streaming favorita. Explora el catálogo completo y tus listas desde el menú lateral.";
   }
-}
-/* ─── LÓGICA DE PERFILES (UNIFICADA Y SEGURA) ─────────────────── */
-const profileScreen  = document.getElementById("profile-screen");
-const profileList    = document.getElementById("profile-list");
-const addProfileBtn  = document.getElementById("add-profile-btn");
-let currentProfile   = null;
+}/* ─── LÓGICA DE PERFILES — PRIME VIDEO STYLE ─────────────────── */
 
-// Usamos una clave única y consistente para tu LocalStorage
+const profileScreen     = document.getElementById("profile-screen");
+const profileList       = document.getElementById("profile-list");
+const editProfilesBtn   = document.getElementById("edit-profiles-btn");
+const profileEditScreen = document.getElementById("profile-edit-screen");
+const profileEditTitleText = document.getElementById("profile-edit-title-text");
+const profileEditAvtImg = document.getElementById("profile-edit-avatar-img");
+const profileEditName   = document.getElementById("profile-edit-name");
+const profileEditSave   = document.getElementById("profile-edit-save-btn");
+const profileEditCancel = document.getElementById("profile-edit-cancel-btn");
+const profileEditAvtWrap= document.getElementById("profile-edit-avatar-wrap");
+const avatarPickerScreen= document.getElementById("avatar-picker-screen");
+const avatarPickerBody  = document.getElementById("avatar-picker-body");
+const avatarPickerCancel= document.getElementById("avatar-picker-cancel-btn");
+
+let currentProfile   = null;
+let editingProfileIdx = null; // null = nuevo perfil
+let pendingAvatar     = null; // avatar seleccionado en el picker pero no guardado aún
+
+/* ── Helpers de almacenamiento ── */
 function getProfiles() {
   return JSON.parse(localStorage.getItem("muzaflix_profiles") || "[]");
 }
-
 function saveProfiles(profiles) {
   localStorage.setItem("muzaflix_profiles", JSON.stringify(profiles));
 }
 
+/* ── Categorías de avatares (sin almacenamiento local) ── */
+const AVATAR_CATEGORIES = [
+  {
+    title: "Clásicos",
+    avatars: [
+      { seed: "Wink",    style: "fun-emoji",   bg: "#e84118" }, // Guiño
+      { seed: "Tounge",  style: "fun-emoji",   bg: "#9c88ff" }, // Lengua afuera
+      { seed: "Giggle",  style: "fun-emoji",   bg: "#4cd137" }, // Risa
+      { seed: "Ghosty",   style: "fun-emoji", bg: "#6c5ce7" }, // Fantasmita
+      { seed: "Cheeky",  style: "fun-emoji",   bg: "#fbc531" }, // Pícaro
+      { seed: "Blushy",   style: "fun-emoji", bg: "#ff7675" }, // Sonrojado
+      { seed: "Aneke?eyes=shades&mouth=wideSmile",   style: "fun-emoji",   bg: "#be2edd" }, // Divertido
+      { seed: "Buddy",   style: "fun-emoji",   bg: "#badc58" },
+    ]
+  },
+  {
+    title: "Personajes",
+    avatars: [
+      { seed: "adventurer-Alex",   style: "adventurer", bg: "#2980b9" },
+      { seed: "adventurer-Mia",    style: "adventurer", bg: "#c0392b" },
+      { seed: "adventurer-Sam",    style: "adventurer", bg: "#8e44ad" },
+      { seed: "adventurer-Jade",   style: "adventurer", bg: "#16a085" },
+      { seed: "adventurer-Cole",   style: "adventurer", bg: "#f39c12" },
+      { seed: "adventurer-Vera",   style: "adventurer", bg: "#2c3e50" },
+      { seed: "adventurer-Omar",   style: "adventurer", bg: "#d35400" },
+      { seed: "adventurer-Nina",   style: "adventurer", bg: "#1abc9c" },
+    ]
+  },
+  {
+    title: "Pixel Art",
+    avatars: [
+      { seed: "pixel-Alpha",  style: "pixel-art", bg: "#6c3483" },
+      { seed: "pixel-Beta",   style: "pixel-art", bg: "#1a5276" },
+      { seed: "pixel-Gamma",  style: "pixel-art", bg: "#1e8449" },
+      { seed: "pixel-Delta",  style: "pixel-art", bg: "#784212" },
+      { seed: "pixel-Epsilon",style: "pixel-art", bg: "#922b21" },
+      { seed: "pixel-Zeta",   style: "pixel-art", bg: "#154360" },
+      { seed: "pixel-Eta",    style: "pixel-art", bg: "#0e6251" },
+      { seed: "pixel-Theta",  style: "pixel-art", bg: "#4d1b6e" },
+    ]
+  },
+  {
+    title: "Dibujos",
+    avatars: [
+      { seed: "lorelei-1", style: "big-smile", bg: "#d6a2e8" },
+      { seed: "lorelei-2", style: "big-smile", bg: "#f8a5c2" },
+      { seed: "lorelei-3", style: "big-smile", bg: "#badc58" },
+      { seed: "lorelei-4", style: "big-smile", bg: "#78e08f" },
+      { seed: "lorelei-5", style: "big-smile", bg: "#60a3bc" },
+      { seed: "lorelei-6", style: "big-smile", bg: "#f9ca24" },
+      { seed: "lorelei-7", style: "big-smile", bg: "#e55039" },
+      { seed: "lorelei-8", style: "big-smile", bg: "#2980b9" },
+    ]
+  }
+];
+
+function getAvatarUrl(style, seed, bg) {
+  const bgHex = bg.replace('#', '');
+  return `https://api.dicebear.com/7.x/${style}/svg?seed=${encodeURIComponent(seed)}&backgroundColor=${bgHex}`;
+}
+
+/* ── Renderizar pantalla de perfiles ── */
 function renderProfiles() {
   const profiles = getProfiles();
   profileList.innerHTML = "";
 
-  profiles.forEach(profile => {
+  profiles.forEach((profile, idx) => {
     const card = document.createElement("div");
     card.className = "profile-card";
-    
-    // Si no tiene avatar personalizado, le genera uno automático basado en su nombre
-    const avatarUrl = profile.avatar || `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(profile.name)}`;
-
+    const avatarUrl = profile.avatar || getAvatarUrl("bottts", profile.name, "#2980b9");
     card.innerHTML = `
       <img class="profile-avatar-img" src="${avatarUrl}" alt="${profile.name}" />
       <div class="profile-name">${profile.name}</div>
     `;
-
-    // Al hacer click, guardamos el perfil activo y ocultamos la pantalla
     card.onclick = () => {
       currentProfile = profile.name;
       localStorage.setItem("muzaflix_current_profile", currentProfile);
       profileScreen.style.display = "none";
     };
-
     profileList.appendChild(card);
   });
+
+  // Tarjeta "+"
+  const addCard = document.createElement("div");
+  addCard.className = "profile-card profile-card-add";
+  addCard.innerHTML = `
+    <div class="profile-avatar-add">+</div>
+    <div class="profile-name">Añadir perfil</div>
+  `;
+  addCard.onclick = () => openProfileEdit(null);
+  profileList.appendChild(addCard);
 }
 
-// Escuchamos el click del botón SOLO si el navegador ya lo encontró en el DOM
-if (addProfileBtn) {
-  addProfileBtn.onclick = () => {
-    const name = prompt("Nombre del nuevo perfil:");
-    if (!name) return;
+/* ── Abrir editor (null = nuevo, idx = editar existente) ── */
+function openProfileEdit(idx) {
+  editingProfileIdx = idx;
+  pendingAvatar = null;
+  profileScreen.style.display = "none";
 
-    const profiles = getProfiles();
-    profiles.push({ 
-      name: name,
-      avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(name)}`
+  const profiles = getProfiles();
+  if (idx !== null && profiles[idx]) {
+    const p = profiles[idx];
+    profileEditTitleText.textContent = p.name || "Editar";
+    profileEditName.value = p.name || "";
+    profileEditAvtImg.src = p.avatar || getAvatarUrl("bottts", p.name, "#2980b9");
+  } else {
+    profileEditTitleText.textContent = "Nuevo";
+    profileEditName.value = "";
+    // Avatar por defecto aleatorio
+    const def = AVATAR_CATEGORIES[0].avatars[Math.floor(Math.random() * AVATAR_CATEGORIES[0].avatars.length)];
+    profileEditAvtImg.src = getAvatarUrl(def.style, def.seed, def.bg);
+    pendingAvatar = profileEditAvtImg.src;
+  }
+
+  updateSaveBtn();
+  profileEditScreen.classList.add("open");
+}
+
+function closeProfileEdit() {
+  profileEditScreen.classList.remove("open");
+  profileScreen.style.display = "flex";
+}
+
+/* Habilitar "Guardar" sólo cuando hay nombre */
+function updateSaveBtn() {
+  if (profileEditName.value.trim().length > 0) {
+    profileEditSave.classList.add("enabled");
+  } else {
+    profileEditSave.classList.remove("enabled");
+  }
+}
+profileEditName.addEventListener("input", () => {
+  if (editingProfileIdx === null) {
+    profileEditTitleText.textContent = profileEditName.value || "Nuevo";
+  }
+  updateSaveBtn();
+});
+
+profileEditCancel.addEventListener("click", closeProfileEdit);
+
+profileEditSave.addEventListener("click", () => {
+  const name = profileEditName.value.trim();
+  if (!name) return;
+  const profiles = getProfiles();
+  const avatar = pendingAvatar || profileEditAvtImg.src;
+  if (editingProfileIdx !== null && profiles[editingProfileIdx]) {
+    profiles[editingProfileIdx].name = name;
+    profiles[editingProfileIdx].avatar = avatar;
+  } else {
+    profiles.push({ name, avatar });
+  }
+  saveProfiles(profiles);
+  renderProfiles();
+  closeProfileEdit();
+});
+
+/* ── Click en el avatar del editor → abrir picker ── */
+profileEditAvtWrap.addEventListener("click", openAvatarPicker);
+
+/* ── Picker de avatares ── */
+function openAvatarPicker() {
+  // Renderizar categorías si está vacío
+  if (!avatarPickerBody.hasChildNodes()) {
+    AVATAR_CATEGORIES.forEach(cat => {
+      const section = document.createElement("div");
+      section.innerHTML = `<div class="avatar-category-title">${cat.title}</div>`;
+      const grid = document.createElement("div");
+      grid.className = "avatar-grid";
+      cat.avatars.forEach(av => {
+        const url = getAvatarUrl(av.style, av.seed, av.bg);
+        const opt = document.createElement("div");
+        opt.className = "avatar-option";
+        opt.dataset.url = url;
+        opt.innerHTML = `<img src="${url}" alt="${av.seed}" loading="lazy" />`;
+        opt.addEventListener("click", () => {
+          document.querySelectorAll(".avatar-option").forEach(o => o.classList.remove("selected"));
+          opt.classList.add("selected");
+          pendingAvatar = url;
+          profileEditAvtImg.src = url;
+          avatarPickerScreen.classList.remove("open");
+          profileEditScreen.classList.add("open");
+        });
+        grid.appendChild(opt);
+      });
+      section.appendChild(grid);
+      avatarPickerBody.appendChild(section);
     });
-
-    saveProfiles(profiles);
-    renderProfiles(); // Recargamos la lista en pantalla
-  };
+  }
+  profileEditScreen.classList.remove("open");
+  avatarPickerScreen.classList.add("open");
 }
 
+avatarPickerCancel.addEventListener("click", () => {
+  avatarPickerScreen.classList.remove("open");
+  profileEditScreen.classList.add("open");
+});
+
+/* ── Botón Editar perfil en pantalla principal ── */
+editProfilesBtn?.addEventListener("click", () => {
+  const profiles = getProfiles();
+  if (profiles.length > 0) {
+    openProfileEdit(0); // edita el primer perfil por defecto
+  } else {
+    openProfileEdit(null);
+  }
+});
+
+/* ── Init ── */
 function initProfiles() {
   renderProfiles();
-  
   const saved = localStorage.getItem("muzaflix_current_profile");
   if (saved) {
     currentProfile = saved;
@@ -2036,7 +2443,7 @@ loadHeroFeatured();
 // Cambiar hero automáticamente cada 30 segundos
 setInterval(() => {
   loadHeroFeatured();
-}, 10000);
+}, 20000);
     /* ─── PWA ────────────────────────────────────────────── */
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("sw.js").catch(err => console.log("SW:", err));
@@ -2055,43 +2462,7 @@ setInterval(() => {
       }
     });
     window.addEventListener("appinstalled", () => { installBtn.style.display = "none"; });
-    const avatarUpload =
-  document.getElementById("avatar-upload");
-
-const customAvatarPreview =
-  document.getElementById("custom-avatar-preview");
-
-avatarUpload?.addEventListener("change", e => {
-
-  const file = e.target.files[0];
-
-  if (!file) return;
-
-  const reader = new FileReader();
-
-  reader.onload = ev => {
-
-    const image = ev.target.result;
-
-    customAvatarPreview.src = image;
-
-    localStorage.setItem(
-      "muzaflix_custom_avatar",
-      image
-    );
-  };
-
-  reader.readAsDataURL(file);
-});
-
-const savedAvatar =
-  localStorage.getItem("muzaflix_custom_avatar");
-
-if (savedAvatar) {
-
-  customAvatarPreview.src = savedAvatar;
-}
-/* ─── CAMBIAR PERFIL ───────────────────── */
+    /* ─── CAMBIAR PERFIL ───────────────────── */
 
 const switchProfileBtn =
   document.getElementById("switch-profile-btn");
