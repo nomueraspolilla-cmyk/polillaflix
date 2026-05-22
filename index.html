@@ -341,15 +341,39 @@ margin-top: -1px;
     background: none !important;
     background-size: unset !important;
   }
+@media (max-width: 800px) {
+
+  /* 📱 ESTILOS EXCLUSIVOS PARA ANDROID / MÓVIL */
+  #hero-title img {
+    /* Mantiene las dimensiones controladas que elegiste */
+    max-width: 103% !important;   
+    max-height: 118px !important;  
+    
+    /* Mueve el logo hacia abajo */
+    margin-top: -10px !important;  
+    
+    /* 🎯 TRUCO DE MAGIA: Márgenes automáticos a los costados para centrar la imagen */
+    margin-left: auto !important;
+    margin-right: auto !important;
+    
+    /* Es fundamental que sea block para que los márgenes automáticos funcionen */
+    display: block !important;
+    
+    /* Conserva la proporción original */
+    height: auto !important;
+    object-fit: contain !important;
+  }
+
+}
 
   /* Banner horizontal */
   .hero-image-side {
     position: relative !important;
     inset: auto !important;
     width: 100%;
-    height: 56vw;
+    height: 172vw;
     min-height: 200px;
-    max-height: 290px;
+    max-height: 400px;
     overflow: hidden;
     flex-shrink: 0;
   }
@@ -379,7 +403,7 @@ margin-top: -1px;
     background: linear-gradient(
       to bottom,
       transparent 0%,
-      rgba(5,7,5,0.15) 45%,
+      rgba(5,7,5,0.0) 45%,
       rgba(5,7,5,0.72) 75%,
       var(--bg) 100%
     ) !important;
@@ -406,12 +430,21 @@ margin-top: -1px;
     background: transparent;
   }
 
-  /* Badge */
-  .hero-badge {
-    font-size: 0.65rem;
+ .hero-badge {
+    font-size: 0.58rem;
     padding: 4px 11px;
-    margin-bottom: 14px;
+    
+    /* 🚀 VALOR CLAVE: Forzamos un margen negativo para empujarlo hacia arriba */
+    margin-top: -25px !important; 
+    
+    /* Mantiene un espacio prudente con el logo que está abajo */
+    margin-bottom: 29px !important; 
+    
+    /* Asegura que se desplace correctamente */
+    display: inline-flex !important; 
   }
+
+}
 
   /* Título/logo — directamente conectado con el banner */
   #hero-title {
@@ -1421,7 +1454,7 @@ box-shadow:
     /* ─── ESTILOS SIDEBAR & OFFCANVAS ────────────── */
     /* Botón Header */
     .muzaflix-menu-toggle {
-      position: fixed; top: 16px; left: 16px; z-index: 1050;
+      position: fixed; top: 2px; left: 10px; z-index: 1050;
       background: rgba(0,0,0,0.6); border: none; color: #fff; font-size: 24px;
       padding: 6px 10px; border-radius: 6px; cursor: pointer; backdrop-filter: blur(4px);
     }
@@ -1491,6 +1524,79 @@ border-right: 1px solid rgba(255,255,255,0.06);
   filter: none !important;
   backdrop-filter: none !important;
   contain: none !important;
+}
+
+/* ─── LONG-PRESS: TOAST DE CONFIRMACIÓN ─────────────────────── */
+.cw-long-press-toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(13, 17, 13, 0.96);
+  border: 1px solid rgba(255, 80, 80, 0.45);
+  border-radius: 14px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 9500;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.34,1.56,0.64,1);
+  max-width: 92vw;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.75);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  flex-wrap: wrap;
+}
+.cw-long-press-toast.visible {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateX(-50%) translateY(0);
+}
+.cw-long-press-toast__text {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  color: var(--text);
+  flex: 1;
+  min-width: 160px;
+}
+.cw-long-press-toast__confirm {
+  background: rgba(220, 50, 50, 0.9);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background 0.18s;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+}
+.cw-long-press-toast__confirm:active { background: rgba(200, 30, 30, 1); }
+.cw-long-press-toast__cancel {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 8px;
+  color: var(--muted);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background 0.18s;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+}
+.cw-long-press-toast__cancel:active { background: rgba(255,255,255,0.14); }
+
+/* Efecto visual en la tarjeta durante el long-press */
+.card--long-press-active {
+  transform: scale(0.92) !important;
+  opacity: 0.65 !important;
+  transition: transform 0.15s ease, opacity 0.15s ease !important;
+  border-color: rgba(255, 80, 80, 0.6) !important;
 }
 
 #modal::before,
@@ -1961,6 +2067,236 @@ function renderContinueWatching() {
       listContainer.appendChild(card);
 
     });
+
+  // Activar long-press en las tarjetas recién renderizadas
+  attachLongPressToCarousel();
+}
+
+/* ─── MÓDULO: PROGRESO VIA postMessage (iframe playimdb.com) ─── */
+
+/**
+ * Aplica los filtros de negocio y guarda el progreso recibido
+ * desde el iframe. Llamada internamente por el listener de postMessage.
+ */
+function _mzGuardarProgresoDesdeIframe(currentTime, duration, idTmdb) {
+  currentTime = Number(currentTime);
+  duration    = Number(duration);
+
+  if (!duration || isNaN(currentTime) || isNaN(duration)) return;
+
+  const porcentaje = (currentTime / duration) * 100;
+
+  // ── Filtro de entrada: < 60 s O < 3 % ────────────────────────
+  if (currentTime < 60 || porcentaje < 3) return;
+
+  // ── Filtro de créditos: > 92 % → completado, eliminar ────────
+  if (porcentaje > 92) {
+    const listaActualizada = getContinueWatching().filter(
+      item => String(item.id) !== String(idTmdb)
+    );
+    saveContinueWatching(listaActualizada);
+    renderContinueWatching();
+    console.info(`[Muzaflix] 🎬 Completado (${porcentaje.toFixed(1)}%) — eliminado de Continuar Viendo.`);
+    return;
+  }
+
+  // ── Guardado estándar: 3 % – 92 % ────────────────────────────
+  if (typeof saveProgress === 'function' && currentItem && String(currentItem.id) === String(idTmdb)) {
+    const season  = (currentItem._type === 'tv')
+                    ? Number(document.getElementById('sel-season')?.value  || 1)
+                    : 0;
+    const episode = (currentItem._type === 'tv')
+                    ? Number(document.getElementById('sel-episode')?.value || 1)
+                    : 0;
+    saveProgress(currentItem, season, episode, porcentaje);
+  }
+
+  // Registrar en Continuar Viendo (primera vez que supera el umbral)
+  if (currentItem && String(currentItem.id) === String(idTmdb)) {
+    const yaEstaEnLista = getContinueWatching().some(h => String(h.id) === String(idTmdb));
+    if (typeof window.muzaflixTrackContinueWatching === 'function') {
+      window.muzaflixTrackContinueWatching(currentItem);
+    }
+    // Re-renderizar solo si es la primera vez que aparece en la lista
+    if (!yaEstaEnLista) renderContinueWatching();
+  }
+
+  console.info(`[Muzaflix] 🍿 Progreso: ${porcentaje.toFixed(1)}% (${Math.floor(currentTime)}s / ${Math.floor(duration)}s)`);
+}
+
+/**
+ * Listener global de postMessage.
+ * Solo procesa mensajes provenientes de playimdb.com.
+ */
+(function _registrarListenerPostMessage() {
+  const DOMINIO_PERMITIDO = 'playimdb.com';
+
+  window.addEventListener('message', function(event) {
+    // Validar origen
+    try {
+      const origen = new URL(event.origin);
+      if (!origen.hostname.endsWith(DOMINIO_PERMITIDO)) return;
+    } catch {
+      return; // origin 'null' (sandboxed) o inválido → ignorar
+    }
+
+    const data = event.data;
+    if (!data || data.event !== 'timeupdate') return;
+    if (data.currentTime === undefined || data.duration === undefined) return;
+
+    const idActual = currentItem?.id;
+    if (!idActual) return;
+
+    _mzGuardarProgresoDesdeIframe(data.currentTime, data.duration, idActual);
+  });
+
+  console.info('[Muzaflix] ✅ Listener postMessage registrado (playimdb.com).');
+})();
+
+
+/* ─── MÓDULO: LONG-PRESS PARA ELIMINAR DE CONTINUAR VIENDO ──── */
+
+/**
+ * Crea (o reutiliza) el toast flotante de confirmación.
+ * Singleton: sólo existe uno en el DOM.
+ */
+function _getOrCreateToast() {
+  let toast = document.getElementById('mz-cw-lp-toast');
+  if (toast) return toast;
+
+  toast = document.createElement('div');
+  toast.id        = 'mz-cw-lp-toast';
+  toast.className = 'cw-long-press-toast';
+  toast.innerHTML = `
+    <span class="cw-long-press-toast__text">¿Eliminar de Continuar Viendo?</span>
+    <button class="cw-long-press-toast__confirm" id="mz-cw-lp-confirm">Eliminar</button>
+    <button class="cw-long-press-toast__cancel"  id="mz-cw-lp-cancel">Cancelar</button>
+  `;
+  document.body.appendChild(toast);
+  return toast;
+}
+
+/**
+ * Muestra el toast y conecta los botones para el ítem dado.
+ */
+function _mostrarToastEliminar(item, cardEl) {
+  const toast = _getOrCreateToast();
+
+  // Clonar botones para limpiar listeners anteriores
+  const btnC = document.getElementById('mz-cw-lp-confirm');
+  const btnX = document.getElementById('mz-cw-lp-cancel');
+  const nuevoC = btnC.cloneNode(true);
+  const nuevoX = btnX.cloneNode(true);
+  btnC.replaceWith(nuevoC);
+  btnX.replaceWith(nuevoX);
+
+  function cerrarToast() {
+    toast.classList.remove('visible');
+    cardEl.classList.remove('card--long-press-active');
+  }
+
+  nuevoC.addEventListener('click', () => {
+    const listaActualizada = getContinueWatching().filter(
+      h => String(h.id) !== String(item.id)
+    );
+    saveContinueWatching(listaActualizada);
+    renderContinueWatching();
+    cerrarToast();
+    console.info(`[Muzaflix] 🗑️ "${item.title || item.name}" eliminado de Continuar Viendo.`);
+  });
+
+  nuevoX.addEventListener('click', cerrarToast);
+
+  // Cerrar si el usuario toca fuera del toast
+  setTimeout(() => {
+    function onOutside(e) {
+      if (!toast.contains(e.target)) {
+        cerrarToast();
+        document.removeEventListener('touchstart', onOutside, true);
+        document.removeEventListener('mousedown',  onOutside, true);
+      }
+    }
+    document.addEventListener('touchstart', onOutside, { capture: true, once: true });
+    document.addEventListener('mousedown',  onOutside, { capture: true, once: true });
+  }, 120);
+
+  toast.classList.add('visible');
+}
+
+/**
+ * Adjunta long-press a todas las .card del carrusel CW.
+ * Se llama al final de renderContinueWatching().
+ */
+function attachLongPressToCarousel() {
+  const carousel = document.getElementById('cw-carousel-list');
+  if (!carousel) return;
+
+  const LONG_PRESS_MS  = 800;
+  const MOVE_THRESHOLD = 10; // px de movimiento que cancela el timer
+
+  // Mismo orden que renderContinueWatching (slice().reverse())
+  const itemsEnOrden = getContinueWatching().slice().reverse();
+
+  carousel.querySelectorAll('.card').forEach(function(cardEl, index) {
+    const item = itemsEnOrden[index];
+    if (!item) return;
+
+    let timer        = null;
+    let startX       = 0;
+    let startY       = 0;
+    let activado     = false;
+
+    function iniciar(x, y) {
+      startX   = x;
+      startY   = y;
+      activado = false;
+      timer = setTimeout(function() {
+        activado = true;
+        if (navigator.vibrate) navigator.vibrate(50);
+        cardEl.classList.add('card--long-press-active');
+        _mostrarToastEliminar(item, cardEl);
+      }, LONG_PRESS_MS);
+    }
+
+    function cancelar() {
+      clearTimeout(timer);
+      timer = null;
+      if (!activado) cardEl.classList.remove('card--long-press-active');
+    }
+
+    // Touch
+    cardEl.addEventListener('touchstart', function(e) {
+      const t = e.touches[0];
+      iniciar(t.clientX, t.clientY);
+    }, { passive: true });
+
+    cardEl.addEventListener('touchmove', function(e) {
+      if (!timer) return;
+      const t = e.touches[0];
+      if (Math.abs(t.clientX - startX) > MOVE_THRESHOLD ||
+          Math.abs(t.clientY - startY) > MOVE_THRESHOLD) {
+        cancelar();
+      }
+    }, { passive: true });
+
+    cardEl.addEventListener('touchend',    cancelar, { passive: true });
+    cardEl.addEventListener('touchcancel', cancelar, { passive: true });
+
+    // Mouse (desktop)
+    cardEl.addEventListener('mousedown',  function(e) { iniciar(e.clientX, e.clientY); });
+    cardEl.addEventListener('mousemove',  function(e) {
+      if (!timer) return;
+      if (Math.abs(e.clientX - startX) > MOVE_THRESHOLD ||
+          Math.abs(e.clientY - startY) > MOVE_THRESHOLD) cancelar();
+    });
+    cardEl.addEventListener('mouseup',    cancelar);
+    cardEl.addEventListener('mouseleave', cancelar);
+
+    // Bloquear menú contextual del SO durante long-press activo
+    cardEl.addEventListener('contextmenu', function(e) {
+      if (activado) e.preventDefault();
+    });
+  });
 }
     /* ─── HELPERS DE CARGA ───────────────────────────────── */
     function renderSkeletons(container, count = 12) {
@@ -2058,11 +2394,8 @@ function renderContinueWatching() {
       backdrop.classList.add("open");
       document.body.style.overflow = "hidden";
 
-      // Guardar en Continuar Viendo
-      if (typeof window.muzaflixTrackContinueWatching === 'function') {
-        window.muzaflixTrackContinueWatching(item);
-        renderContinueWatching();
-      }
+      // Continuar Viendo se guarda sólo cuando el usuario
+      // efectivamente reproduce (via postMessage desde el iframe)
 
       // Fetch detalle para obtener imdb_id, runtime, cast, similar
       try {
@@ -2135,10 +2468,8 @@ function renderContinueWatching() {
           currentImdbId = detail.imdb_id || null;
           if (currentImdbId) {
             movieFrame.src = `${STREAM_MOVIE}${currentImdbId}/`;
-            // Guardar en continuar viendo (películas)
-            if (currentItem) {
-              saveProgress(currentItem, 1, 1, 0);
-            }
+            // Continuar Viendo se guarda sólo cuando el usuario
+            // supera 60 s de reproducción (via postMessage del iframe)
           }
         } else {
           currentSeasons = detail.number_of_seasons || 1;
@@ -2308,8 +2639,8 @@ function renderContinueWatching() {
     // Guardar progreso del episodio actual para este perfil
     if (currentItem) {
       saveProgress(currentItem, s, e, 0);
-      window.muzaflixTrackContinueWatching(currentItem);
-      renderContinueWatching();
+      // Continuar Viendo se actualiza sólo cuando el usuario
+      // supera 60 s de reproducción (via postMessage del iframe)
     }
 
   }, 120);
@@ -3207,43 +3538,8 @@ switchProfileBtn?.addEventListener("click", (e) => {
 
 
 
-       // ─── PEGAR AL INICIO DEL SCRIPT ───
-function actualizarProgresoPelicula(idTmdb, nombrePerfil) {
-  const tiempoActual = video.currentTime; // Segundos actuales
-  const duracionTotal = video.duration;   // Duración total
-  
-  if (!duracionTotal) return; 
-
-  const porcentajeVisto = (tiempoActual / duracionTotal) * 100;
-  const KEY = `muzaflix_continue_watching__${nombrePerfil}`;
-  let listaContinuar = JSON.parse(localStorage.getItem(KEY)) || {};
-
-  // Filtro de menos de 1 minuto o menos del 3%
-  if (tiempoActual < 60 || porcentajeVisto < 3) {
-    console.log("⏱️ Progreso insuficiente para Continuar Viendo.");
-    return;
-  } 
-  
-  // Filtro de créditos (Más del 92%)
-  if (porcentajeVisto > 92) {
-    if (listaContinuar[idTmdb]) {
-      delete listaContinuar[idTmdb];
-      localStorage.setItem(KEY, JSON.stringify(listaContinuar));
-      console.log("🎬 Película completada. Eliminada.");
-    }
-    return;
-  } 
-
-  // Guardado estándar
-  listaContinuar[idTmdb] = {
-    id: idTmdb,
-    tiempo: tiempoActual,
-    porcentaje: porcentajeVisto,
-    fecha: Date.now()
-  };
-  localStorage.setItem(KEY, JSON.stringify(listaContinuar));
-  console.log(`🍿 Progreso guardado: ${porcentajeVisto.toFixed(1)}%`);
-}
+       // La función de progreso fue reemplazada por el listener postMessage
+       // que se registra automáticamente en el script principal.
 
       // Inicializar dropdown géneros
       tmdbGenres.forEach(g => {
@@ -3409,15 +3705,8 @@ history.push(item);;
     // ⛶ Fullscreen Multiplataforma (Android/iOS/Win/Mac)
 
 
-// ─── PEGAR AL FINAL DE TU SCRIPT (Antes de cerrar la etiqueta) ───
-
-  // Captura el perfil activo actual que guardaste cuando el usuario inició sesión
-  const perfilActivo = localStorage.getItem("muzaflix_current_profile") || "Invitado";
-
-  // Cada vez que el usuario pone PAUSA o sale del reproductor, se ejecuta el guardado inteligente
-  video.addEventListener('pause', () => {
-    actualizarProgresoPelicula(tmdbId, perfilActivo);
-  });
+// ─── El listener de progreso vía postMessage ya está registrado
+// ─── en el script principal. No se necesita código adicional aquí.
 
   </script>
 </body>
