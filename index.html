@@ -2578,16 +2578,13 @@ function attachLongPressToCarousel() {
               </div>
             `;
             item.addEventListener("click", () => {
-              // Update selectors and play
-              selSeason.value = season;
-              selEpisode.value = ep.episode_number;
-              if (currentImdbId) loadTVEpisode();
-              // Update active state
-              listEl.querySelectorAll(".episode-item").forEach(el => el.classList.remove("active-ep"));
-              item.classList.add("active-ep");
-              // Scroll player into view
-              document.querySelector(".player-wrap")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-            });
+  selSeason.value = season;
+  selEpisode.value = ep.episode_number;
+  if (currentImdbId) loadTVEpisode(season, ep.episode_number); // ← pasar valores directo
+  listEl.querySelectorAll(".episode-item").forEach(el => el.classList.remove("active-ep"));
+  item.classList.add("active-ep");
+  document.querySelector(".player-wrap")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+});
             listEl.appendChild(item);
           });
         } catch(err) {
@@ -2619,11 +2616,9 @@ function attachLongPressToCarousel() {
 
     tvLoadBtn.addEventListener("click", () => { if (currentImdbId) loadTVEpisode(); });
 
-    function loadTVEpisode() {
-
-  const s = Number(selSeason.value || 1);
-  const e = Number(selEpisode.value || 1);
-
+    function loadTVEpisode(forceSeason, forceEpisode) {
+  const s = Number(forceSeason ?? selSeason.value ?? 1);
+  const e = Number(forceEpisode ?? selEpisode.value ?? 1);
   // Forzar recarga limpia del iframe
   movieFrame.src = "about:blank";
 
