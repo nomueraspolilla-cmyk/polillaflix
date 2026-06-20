@@ -1559,6 +1559,28 @@ box-shadow:
       grid-template-columns: repeat(auto-fill, minmax(var(--card-w), 1fr));
       gap: 14px;
     }
+
+    /* ─── CATÁLOGO "VER MÁS": overlay fijo, aislado del fondo ──── */
+    #catalog-view {
+      position: fixed;
+      inset: 0;
+      z-index: 1500;
+      background: var(--bg);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px);
+      transition: opacity 0.28s, transform 0.28s;
+    }
+    #catalog-view.open {
+      opacity: 1;
+      pointer-events: all;
+      transform: translateY(0);
+    }
     #catalog-view .grid-search {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(var(--card-w), 1fr));
@@ -1618,8 +1640,9 @@ border-right: 1px solid rgba(255,255,255,0.06);
     .muzaflix-close-btn { background: none; border: none; color: #fff; font-size: 22px; cursor: pointer; }
     .muzaflix-nav ul { list-style: none; padding: 0; margin: 0; }
     .muzaflix-nav li { margin-bottom: 8px; }
-    .muzaflix-nav a { color: #b3b3b3; text-decoration: none; display: block; padding: 10px; border-radius: 6px; transition: 0.2s; }
+    .muzaflix-nav a { color: #b3b3b3; text-decoration: none; display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 6px; transition: 0.2s; }
     .muzaflix-nav a:hover { background: #1f1f1f; color: #fff; }
+    .muzaflix-nav a svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; flex-shrink: 0; }
     .muzaflix-submenu { padding-left: 14px; display: none; }
     .muzaflix-submenu.open { display: block; }
     hr { border: 0; border-top: 1px solid #333; margin: 18px 0; }
@@ -1657,8 +1680,8 @@ border-right: 1px solid rgba(255,255,255,0.06);
         bottom: 0; left: 0; right: 0;
         height: 60px;
         background: rgba(10,12,10,0.92);
-        backdrop-filter: blur(6px);
-        -webkit-backdrop-filter: blur(6px);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
         border-top: 1px solid rgba(0,255,102,0.10);
         z-index: 1060;
         align-items: stretch;
@@ -1688,7 +1711,7 @@ border-right: 1px solid rgba(255,255,255,0.06);
       }
       .mbn-tab svg {
         width: 22px; height: 22px;
-        stroke: currentColor; fill: none; stroke-width: 1.8;
+        stroke: #668872; fill: none; stroke-width: 1.8;
         transition: stroke 0.2s, transform 0.2s;
       }
       .mbn-tab.active { color: var(--accent); }
@@ -1931,19 +1954,19 @@ border-right: 1px solid rgba(255,255,255,0.06);
   <!-- ─── BOTTOM TAB BAR (mobile only) ────────────────────────── -->
   <nav id="muzaflix-bottom-nav">
     <button class="mbn-tab active" id="mbn-tab-inicio" aria-label="Inicio">
-      <svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9.5z"/><polyline points="9 21 9 12 15 12 15 21"/></svg>
+      <svg width="22" height="22" viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9.5z"/><polyline points="9 21 9 12 15 12 15 21"/></svg>
       Inicio
     </button>
     <button class="mbn-tab" id="mbn-tab-explorar" aria-label="Explorar">
-      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <svg width="22" height="22" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       Explorar
     </button>
     <button class="mbn-tab" id="mbn-tab-milista" aria-label="Mi Lista">
-      <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <svg width="22" height="22" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
       Mi Lista
     </button>
     <button class="mbn-tab" id="mbn-tab-ajustes" aria-label="Ajustes">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <svg width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       Ajustes
     </button>
   </nav>
@@ -2076,29 +2099,29 @@ border-right: 1px solid rgba(255,255,255,0.06);
     </div>
     <nav class="muzaflix-nav">
       <ul>
-        <li><a href="#" id="switch-profile-btn">👤 Cambiar perfil</a></li>
-        <li><a href="#" id="muzaflix-nav-inicio">🏠 Inicio</a></li>
+        <li><a href="#" id="switch-profile-btn"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Cambiar perfil</a></li>
+        <li><a href="#" id="muzaflix-nav-inicio"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9.5z"/><polyline points="9 21 9 12 15 12 15 21"/></svg>Inicio</a></li>
         <li>
-          <a href="#" id="muzaflix-nav-categorias">🎬 Categorías</a>
+          <a href="#" id="muzaflix-nav-categorias"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M3 6.5L5.5 3h3L6 6.5h3L11.5 3h3L12 6.5h3L17.5 3h3L18 6.5H21V18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6.5z"/></svg>Categorías</a>
           <ul class="muzaflix-submenu" id="muzaflix-cat-list">
             <li><a href="#" data-type="movie">Películas</a></li>
             <li><a href="#" data-type="tv">Series</a></li>
           </ul>
         </li>
         <li>
-          <a href="#" id="muzaflix-nav-generos">🎭 Géneros</a>
+          <a href="#" id="muzaflix-nav-generos"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M20.59 13.41L11 4H4v7l9.59 9.59a2 2 0 0 0 2.82 0l4.18-4.18a2 2 0 0 0 0-2.82z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>Géneros</a>
           <ul class="muzaflix-submenu" id="muzaflix-genres-list"></ul>
         </li>
       </ul>
       <hr>
       <h3>Mi Espacio</h3>
       <ul>
-        <li><a href="#" id="muzaflix-nav-milista">❤️ Mi Lista</a></li>
-        <li><a href="#" id="muzaflix-nav-continuar">⏯️ Continuar Viendo</a></li>
+        <li><a href="#" id="muzaflix-nav-milista"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Mi Lista</a></li>
+        <li><a href="#" id="muzaflix-nav-continuar"><svg width="18" height="18" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polygon points="10 8 16 12 10 16 10 8"/></svg>Continuar Viendo</a></li>
       </ul>
       <hr>
       <ul>
-        <li><a href="#" id="muzaflix-nav-configuracion">⚙️ Configuración</a></li>
+        <li><a href="#" id="muzaflix-nav-configuracion"><svg width="18" height="18" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Configuración</a></li>
       </ul>
     </nav>
   </aside>
@@ -2212,8 +2235,8 @@ border-right: 1px solid rgba(255,255,255,0.06);
       <div class="grid-search" id="search-grid"></div>
     </div>
 
-    <div id="catalog-view" style="display:none;">
-      <div class="section-title" style="padding:0 40px; align-items:center;">
+    <div id="catalog-view">
+      <div class="section-title" style="padding:24px 40px 0; align-items:center;">
         <button id="catalog-back-btn" aria-label="Volver" style="background:none;border:none;color:#fff;cursor:pointer;font-size:1.4rem;line-height:1;padding:0 4px 0 0;">←</button>
         <span id="catalog-view-title">Catálogo</span>
       </div>
@@ -2843,12 +2866,10 @@ function attachLongPressToCarousel() {
     let _catalogState = { endpoint: "", type: "movie", extraParams: "", page: 1, totalPages: 1 };
 
     async function openCatalogView(title, endpoint, type, extraParams) {
-      document.getElementById("hero-featured").style.display = "none";
-      document.getElementById("search-results").style.display = "none";
-      document.getElementById("catalog").style.display = "none";
-      document.getElementById("sec-providers").style.display = "none";
+      _lockBodyScroll();
       const view = document.getElementById("catalog-view");
-      view.style.display = "";
+      view.classList.add("open");
+      view.scrollTop = 0;
       document.getElementById("catalog-view-title").textContent = title;
       _catalogState = { endpoint, type, extraParams, page: 1, totalPages: 1 };
 
@@ -2858,8 +2879,20 @@ function attachLongPressToCarousel() {
       moreBtn.style.display = "none";
       renderSkeletons(grid, 18);
       await _loadCatalogPage();
-      window.scrollTo({ top: 0, behavior: "smooth" });
       history.pushState({ catalogViewOpen: true }, "");
+    }
+
+    /* Scroll-lock igual que el modal de fichas: #catalog-view es un
+       overlay fixed inset:0 que se superpone sin tocar el layout de
+       atrás, así que basta con overflow:hidden en el body. El fondo
+       nunca se mueve ni cambia de tamaño, por eso al destrabar el
+       scroll queda exactamente donde estaba, sin capturar/restaurar
+       coordenadas a mano. */
+    function _lockBodyScroll() {
+      document.body.style.overflow = "hidden";
+    }
+    function _unlockBodyScroll() {
+      document.body.style.overflow = "";
     }
 
     async function _loadCatalogPage() {
@@ -2880,10 +2913,8 @@ function attachLongPressToCarousel() {
     }
 
     function closeCatalogView() {
-      document.getElementById("catalog-view").style.display = "none";
-      document.getElementById("catalog").style.display = "";
-      document.getElementById("hero-featured").style.display = "";
-      document.getElementById("sec-providers").style.display = "";
+      document.getElementById("catalog-view").classList.remove("open");
+      _unlockBodyScroll();
     }
 
     document.getElementById("catalog-back-btn").addEventListener("click", () => {
@@ -3550,7 +3581,7 @@ document.addEventListener("webkitfullscreenchange", async () => {
     window.addEventListener("popstate", (e) => {
       // 0. Cerrar catalog view con botón atrás
       const catalogView = document.getElementById("catalog-view");
-      if (catalogView && catalogView.style.display !== "none") {
+      if (catalogView && catalogView.classList.contains("open")) {
         closeCatalogView();
         return;
       }
@@ -3668,7 +3699,10 @@ document.addEventListener("webkitfullscreenchange", async () => {
     }
 
     document.getElementById("search-open-btn").addEventListener("click", openSearchOverlay);
-    document.getElementById("search-back-btn").addEventListener("click", closeSearchOverlay);
+    document.getElementById("search-back-btn").addEventListener("click", () => {
+      if (history.state && history.state.searchOverlay) history.back();
+      else closeSearchOverlay();
+    });
     document.getElementById("search-history-clear").addEventListener("click", clearSearchHistory);
 
     let overlaySearchTimeout;
@@ -3745,7 +3779,7 @@ document.addEventListener("webkitfullscreenchange", async () => {
 
     async function doSearch(query) {
       document.getElementById("catalog").style.display = "none";
-      document.getElementById("catalog-view").style.display = "none";
+      document.getElementById("catalog-view").classList.remove("open");
       const srEl  = document.getElementById("search-results");
       const grid  = document.getElementById("search-grid");
       const label = document.getElementById("search-label");
@@ -3782,7 +3816,7 @@ document.addEventListener("webkitfullscreenchange", async () => {
     window.resetMuzaflixFilters = function() {
       document.getElementById("hero-featured").style.display = "";
       document.getElementById("search-results").style.display = "none";
-      document.getElementById("catalog-view").style.display = "none";
+      document.getElementById("catalog-view").classList.remove("open");
       document.getElementById("catalog").style.display = "";
       document.getElementById("sec-popular").style.display = "";
       searchEl.value = "";
@@ -4687,7 +4721,7 @@ switchProfileBtn?.addEventListener("click", (e) => {
           e.preventDefault();
           const type = e.currentTarget.dataset.type;
           document.getElementById("search-results").style.display = "none";
-          document.getElementById("catalog-view").style.display = "none";
+          document.getElementById("catalog-view").classList.remove("open");
           document.getElementById("catalog").style.display = "";
           loadCarousel("carousel-popular", "/movie/popular", "movie", "", "Populares Ahora");
           loadDynamicRows(type === 'movie' ? 'movie' : 'tv');
@@ -4708,7 +4742,7 @@ switchProfileBtn?.addEventListener("click", (e) => {
           const genreName = e.target.textContent;
           
           document.getElementById("catalog").style.display = "none";
-          document.getElementById("catalog-view").style.display = "none";
+          document.getElementById("catalog-view").classList.remove("open");
           const srEl  = document.getElementById("search-results");
           const grid  = document.getElementById("search-grid");
           const label = document.getElementById("search-label");
@@ -4745,7 +4779,7 @@ switchProfileBtn?.addEventListener("click", (e) => {
         e.preventDefault();
         const favs = typeof getFavs === 'function' ? getFavs() : [];
         document.getElementById('catalog').style.display = 'none';
-        document.getElementById('catalog-view').style.display = 'none';
+        document.getElementById('catalog-view').classList.remove('open');
         document.getElementById('search-results').style.display = '';
         const label = document.getElementById('search-label');
         const grid  = document.getElementById('search-grid');
