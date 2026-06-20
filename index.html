@@ -4,56 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Muzaflix</title>
-
-  <!-- ─── FIREBASE AUTH GUARD ─────────────────────────────────── -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyAAJTWaZZtw-EiELVXEp2LkUCMmToBlcEk",
-      authDomain: "muzaflix.firebaseapp.com",
-      projectId: "muzaflix",
-      storageBucket: "muzaflix.firebasestorage.app",
-      messagingSenderId: "806873447459",
-      appId: "1:806873447459:web:54319905a57552ffe30596"
-    };
-
-    const app  = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    // Esperar a que Firebase resuelva el estado de sesión
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        // Sin sesión → volver al login
-        window.location.href = 'muzaflix-inicio.html';
-        return;
-      }
-
-      // Sesión activa → exponer datos del usuario globalmente
-      window.muzaflixUser = {
-        uid:         user.uid,
-        name:        user.displayName || user.email.split('@')[0],
-        email:       user.email,
-        photoURL:    user.photoURL || null,
-      };
-
-      // Mostrar nombre/avatar en el header si existe el badge
-      const badge = document.getElementById('header-user-badge');
-      if (badge) {
-        badge.innerHTML = window.muzaflixUser.photoURL
-          ? `<img src="${window.muzaflixUser.photoURL}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1.5px solid var(--accent);" alt="Avatar">`
-          : `<span style="font-size:0.8rem;color:var(--accent);font-weight:600;">${window.muzaflixUser.name.split(' ')[0]}</span>`;
-        badge.style.display = 'flex';
-      }
-
-      // Exponer signOut para usarlo desde Ajustes/sidebar
-      window.muzaflixSignOut = async () => {
-        await signOut(auth);
-        window.location.href = 'muzaflix-inicio.html';
-      };
-    });
-  </script>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#00ff66">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2107,16 +2057,10 @@ border-right: 1px solid rgba(255,255,255,0.06);
         </div>
       </div>
 
-      <!-- Cerrar sesión -->
-      <div style="background:var(--surface);border:1px solid rgba(255,80,80,0.2);border-radius:14px;overflow:hidden;margin-top:4px;">
-        <button id="cfg-signout-btn" style="width:100%;display:flex;align-items:center;gap:14px;padding:16px 18px;background:none;border:none;color:#ff6b6b;font-family:'DM Sans',sans-serif;font-size:0.95rem;cursor:pointer;-webkit-tap-highlight-color:transparent;">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-          Cerrar sesión
-        </button>
-      </div>
-
     </div>
   </div>
+
+  <aside id="muzaflix-sidebar" class="muzaflix-offcanvas">
     <div class="muzaflix-sidebar-header">
       <h2>Muzaflix</h2>
       <button id="muzaflix-close-sidebar" class="muzaflix-close-btn" aria-label="Cerrar menú">✕</button>
@@ -2146,7 +2090,6 @@ border-right: 1px solid rgba(255,255,255,0.06);
       <hr>
       <ul>
         <li><a href="#" id="muzaflix-nav-configuracion">⚙️ Configuración</a></li>
-        <li><a href="#" id="muzaflix-nav-signout" style="color:#ff6b6b;">🚪 Cerrar sesión</a></li>
       </ul>
     </nav>
   </aside>
@@ -2155,7 +2098,6 @@ border-right: 1px solid rgba(255,255,255,0.06);
   <header>
     <div class="logo">Muza<span>flix</span></div>
     <div style="display:flex;align-items:center;gap:8px;">
-      <div id="header-user-badge" style="display:none;align-items:center;"></div>
       <button id="pwa-install-btn">Instalar Muzaflix 📲</button>
       <button id="search-open-btn" aria-label="Buscar" style="background:rgba(0,255,102,0.06);border:1px solid var(--border);border-radius:8px;width:40px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.2s,border-color 0.2s;color:var(--muted);">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="17" height="17"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -4801,14 +4743,6 @@ switchProfileBtn?.addEventListener("click", (e) => {
         closeSidebar();
       });
 
-      // 🚪 Cerrar sesión
-      document.getElementById('muzaflix-nav-signout').addEventListener('click', (e) => {
-        e.preventDefault();
-        if (confirm('¿Cerrar sesión?')) {
-          if (typeof window.muzaflixSignOut === 'function') window.muzaflixSignOut();
-        }
-      });
-
       // ⏯️ Continuar Viendo: Carga y renderizado usando objetos TMDB guardados de tu reproductor nativo
       document.getElementById('muzaflix-nav-continuar').addEventListener('click', (e) => {
         e.preventDefault();
@@ -4964,13 +4898,6 @@ switchProfileBtn?.addEventListener("click", (e) => {
         const orig = btn.innerHTML;
         btn.innerHTML = '<span style="color:var(--accent);font-family:\'DM Sans\',sans-serif;font-size:0.95rem;padding:0 18px;">✓ Historial limpiado</span>';
         setTimeout(() => { btn.innerHTML = orig; }, 2000);
-      });
-
-      // 🚪 Cerrar sesión
-      document.getElementById('cfg-signout-btn')?.addEventListener('click', () => {
-        if (confirm('¿Cerrar sesión?')) {
-          if (typeof window.muzaflixSignOut === 'function') window.muzaflixSignOut();
-        }
       });
 
       // ── MI LISTA ─────────────────────────────────────────────────
