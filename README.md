@@ -1,0 +1,1 @@
+Este código NO ME PERTENECE, únicamente lo copié para cambiar algunos colores y que todo combine con mi setup para uso personal, no sé hacer nada ni podría hacer algo parecido, todos los créditos al creador original https://github.com/tak914/muzaflix
